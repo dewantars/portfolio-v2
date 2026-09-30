@@ -1,0 +1,10 @@
+{
+  "description": "Showcase your skills and projects with a premium dark-mode portfolio designed for software engineering students, emphasizing quality and usability.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
