@@ -11,7 +11,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 
 export default function Home() {
   return (
-    <div className="site-shell">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_50%_-15%,rgba(255,255,255,0.07),transparent_25%)] bg-[#050505] text-[#fafafa]">
       <Navigation />
       <main id="top">
         <Hero />
