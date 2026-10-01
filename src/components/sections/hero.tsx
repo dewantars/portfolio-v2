@@ -1,24 +1,32 @@
 import Image from "next/image";
 import { Arrow } from "@/components/ui/icons";
+import { Profile } from "@prisma/client";
 
-export function Hero() {
+interface HeroProps {
+  profile: Profile | null;
+}
+
+export function Hero({ profile }: HeroProps) {
+  const name = profile?.name ?? "Dewanta Rahma Satria";
+  const headline = profile?.headline ?? "Software Engineer | QA Engineer | Intern at Telkom Indonesia | Student Telkom University";
+  const summary = profile?.summary ?? "I am interested in software development, particularly in creating applications as a web and mobile developer, which I have been pursuing for the past few years.";
+  const photoUrl = profile?.photoUrl ?? "/assets/profile.jpg";
+
   return (
     <section className="min-h-[calc(100vh-88px)] flex items-center pt-24 pb-16 md:pt-28 lg:pt-[120px] lg:pb-20 max-w-[1320px] mx-auto px-5 md:px-7 lg:px-8" id="hero">
       <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 lg:gap-16">
         {/* LEFT COLUMN: Intro & CTA */}
         <div className="w-full lg:flex-[0_1_55%] lg:max-w-[680px] flex flex-col reveal">
           <h1 className="m-0 mb-5 lg:mb-7 text-[clamp(42px,8.5vw,52px)] md:text-[clamp(52px,5.2vw,68px)] lg:text-[clamp(64px,5.8vw,88px)] font-bold leading-[1.02] tracking-[-0.04em] text-[#fafafa]">
-            Dewanta Rahma Satria
+            {name}
           </h1>
 
           <div className="flex flex-col gap-3.5 mb-9 lg:mb-10">
             <p className="m-0 text-[#e2e2e2] text-base md:text-[19px] leading-[1.55] font-normal">
-              I am interested in software development,
-              particularly in creating applications as a web and mobile developer,
-              which I have been pursuing for the past few years.
+              {summary}
             </p>
             <p className="m-0 text-[#999999] text-sm md:text-[15px] leading-[1.6]">
-              Software Engineer | QA Engineer | Intern at Telkom Indonesia | Student Telkom University
+              {headline}
             </p>
           </div>
 
@@ -46,8 +54,8 @@ export function Hero() {
 
             <div className="relative w-full h-full rounded-[28px] border border-white/10 bg-[#0a0a0a] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.65),inset_0_1px_rgba(255,255,255,0.1)] hover:scale-[1.01] hover:border-white/20 hover:shadow-[0_30px_75px_rgba(0,0,0,0.8),inset_0_1px_rgba(255,255,255,0.16)] transition-all duration-400 group">
               <Image
-                src="/assets/profile.jpg"
-                alt="Portrait of Dewanta Rahma Satria"
+                src={photoUrl}
+                alt={`Portrait of ${name}`}
                 width={440}
                 height={550}
                 priority

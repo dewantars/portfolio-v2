@@ -1,6 +1,13 @@
 import { SectionLabel } from "@/components/ui/icons";
+import { Profile } from "@prisma/client";
 
-export function About() {
+interface AboutProps {
+  profile: Profile | null;
+}
+
+export function About({ profile }: AboutProps) {
+  const summary = profile?.summary ?? "Hello! I'm Dewanta, a Software Engineering student focused on building reliable, well-crafted digital experiences.";
+
   return (
     <section className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10 reveal" id="about">
       <SectionLabel>ABOUT ME</SectionLabel>
@@ -10,10 +17,7 @@ export function About() {
           detail.
         </h2>
         <div className="max-w-[650px] flex flex-col gap-4 text-[#999999] text-base leading-[1.7]">
-          <p>
-            Hello! I&apos;m Dewanta, a Software Engineering student focused on building
-            reliable, well-crafted digital experiences.
-          </p>
+          <p>{summary}</p>
           <p>
             I build software where engineering precision meets thoughtful design,
             with a focus on quality, usability, and reliability.

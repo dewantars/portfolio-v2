@@ -1,92 +1,10 @@
 import { Arrow, SectionLabel } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { Project as ProjectType } from "@prisma/client";
 
-interface Project {
-  number: string;
-  name: string;
-  role: string;
-  description: string;
-  stack: string[];
-  type: string;
-  theme: string;
-  github?: string | null;
-  liveUrl?: string | null;
+interface ProjectsProps {
+  projects: ProjectType[];
 }
-
-const projects: Project[] = [
-  {
-    number: "01",
-    name: "MyDigiLearn",
-    role: "QA Engineer Intern",
-    description:
-      "Contributed to the quality assurance of MyDigiLearn by performing manual and end-to-end (E2E) testing to validate application functionality and user flows. Developed automated E2E test scenarios using Playwright to improve test coverage, identify functional issues, and ensure consistent application behavior across key features.",
-    stack: ["Manual", "Playwright", "Postman", "k6", "Jira"],
-    type: "standard",
-    theme: "violet",
-    github: null,
-    liveUrl: null,
-  },
-  {
-    number: "02",
-    name: "Quenza Conference",
-    role: "Full-Stack Engineer Intern",
-    description:
-      "Worked as a Remote Full-Stack Engineer on the development of the Quenza Conference website. Contributed to both frontend and backend development, implementing features such as event information, speaker details, registration, and other conference-related functionality while ensuring a responsive and reliable user experience.",
-    stack: ["Laravel", "React", "PHP", "Tailwind CSS", "SQLite"],
-    type: "standard",
-    theme: "sky",
-    github: null,
-    liveUrl: null,
-  },
-  {
-    number: "03",
-    name: "IDAMAN TSL JABAR",
-    role: "QA Engineer",
-    description:
-      "Contributed to the quality assurance of IDAMAN TSL West Java by conducting manual testing, end-to-end (E2E) testing using Playwright, and performance testing using JMeter. Tested key user flows and system functionality to identify issues, validate application behavior, and evaluate system performance under different loads.",
-    stack: ["Playwright", "Postman", "Jira", "Jest", "JMeter"],
-    type: "featured",
-    theme: "emerald",
-    github: null,
-    liveUrl: null,
-  },
-  {
-    number: "04",
-    name: "Gemarawana",
-    role: "Full-Stack Developer",
-    description:
-      "Developed the Gemarawana official website as a full-stack developer from initial planning and development to deployment. Built the website using Next.js and PostgreSQL, implementing dynamic content and organizational information while ensuring a responsive and user-friendly experience. Managed the application deployment and production environment using Vercel.",
-    stack: ["Next.js", "Tailwind CSS", "TypeScript", "PostgreSQL", "Vercel"],
-    type: "wide",
-    theme: "amber",
-    github: null,
-    liveUrl: "https://www.gemarawana.or.id/",
-  },
-  {
-    number: "05",
-    name: "HikePass",
-    role: "Mobile Engineer",
-    description:
-      "Mobile Engineer on HikePass, developing mobile application features using Flutter and integrating backend services with Firebase. Utilized Postman for API testing and validation to ensure smooth data exchange and reliable application functionality.",
-    stack: ["Flutter", "Firebase", "Postman"],
-    type: "standard",
-    theme: "sky",
-    github: "https://github.com/hikepassapp/hikepassApp",
-    liveUrl: null,
-  },
-  {
-    number: "06",
-    name: "CMS HikePass",
-    role: "Full-Stack Developer",
-    description:
-      "Developed an admin dashboard to manage application data and administrative processes using Vue.js, Laravel, MySQL, and Bootstrap. Contributed to frontend and backend development, implementing data management features and integrating the user interface with backend services and database operations.",
-    stack: ["Vue.js", "Bootstrap", "Laravel", "MySQL", "PHP"],
-    type: "standard",
-    theme: "green",
-    github: "https://github.com/hikepassapp/hikepassWeb-Vue.git",
-    liveUrl: null,
-  }
-];
 
 const themeGradients: Record<string, string> = {
   violet: "bg-[radial-gradient(circle_at_65%_30%,#241c2a,#0a090c_60%)]",
@@ -96,7 +14,7 @@ const themeGradients: Record<string, string> = {
   green: "bg-[radial-gradient(circle_at_50%_50%,#11231a,#090b0a_60%)]",
 };
 
-function ProjectVisual({ project }: { project: Project }) {
+function ProjectVisual({ project }: { project: ProjectType }) {
   return (
     <div
       className={cn(
@@ -144,7 +62,7 @@ function ProjectVisual({ project }: { project: Project }) {
   );
 }
 
-export function Projects() {
+export function Projects({ projects }: ProjectsProps) {
   return (
     <section className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10" id="projects">
       <div className="reveal">
@@ -169,7 +87,7 @@ export function Projects() {
               project.type === "featured" && "lg:col-span-full lg:grid lg:grid-cols-[1.4fr_0.6fr]",
               project.type === "wide" && "lg:col-span-full lg:grid lg:grid-cols-[0.8fr_1.2fr]"
             )}
-            key={project.name}
+            key={project.id}
           >
             <ProjectVisual project={project} />
             <div className="p-6 lg:p-8 flex flex-col justify-between gap-10 lg:gap-14 border-t border-white/10 lg:border-t-0">

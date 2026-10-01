@@ -1,23 +1,11 @@
 import { SectionLabel } from "@/components/ui/icons";
+import { SkillGroup as SkillGroupType } from "@prisma/client";
 
-const skillGroups = [
-  {
-    title: "Frontend",
-    skills: ["Next.js", "React", "Vue", "Flutter", "Tailwind CSS"],
-  },
-  {
-    title: "Backend",
-    skills: ["Node.js", "NestJS", "PostgreSQL", "Prisma", "Laravel", "ExpressJS", "FastAPI"],
-  },
-  {
-    title: "Quality Assurance",
-    skills: ["Playwright", "Katalon Studio", "Postman", "Cucumber", "k6", "JMeter", "Jest", "Vitest"],
-  },
-  { title: "Design", skills: ["Figma", "Canva"] },
-  { title: "Other Tools", skills: ["Git", "GitHub", "GitLab", "Jira", "Docker", "Kubernetes", "ArgoCD", "Grafana", "Microsoft Office"] },
-];
+interface SkillsProps {
+  skillGroups: SkillGroupType[];
+}
 
-export function Skills() {
+export function Skills({ skillGroups }: SkillsProps) {
   return (
     <section
       className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10 reveal"
@@ -37,7 +25,7 @@ export function Skills() {
         {skillGroups.map((group, groupIndex) => (
           <div
             className="min-h-[130px] py-7 lg:py-0 grid grid-cols-1 lg:grid-cols-[270px_1fr] items-center gap-6 lg:gap-0 border-b border-white/10"
-            key={group.title}
+            key={group.id}
           >
             <div className="flex items-center gap-7 text-[17px] text-[#fafafa] font-medium">
               <span className="text-[#555555] text-[10px]">0{groupIndex + 1}</span>

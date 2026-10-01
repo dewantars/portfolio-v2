@@ -4,58 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import { SectionLabel } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { Achievement as AchievementType } from "@prisma/client";
 
-interface Achievement {
-  id: string;
-  title: string;
-  date: string;
-  description: string;
-  image: string;
+interface AchievementsProps {
+  achievements: AchievementType[];
 }
 
-const achievementsData: Achievement[] = [
-  {
-    id: "01",
-    title: "Software Engineering & QA Certification",
-    date: "2025 • Certification",
-    description: "Certified in Software Engineering Rigor, Automated Testing, and System Quality Assurance.",
-    image: "https://images.unsplash.com/photo-1589330694653-ded6df03f754?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: "02",
-    title: "Telkom Indonesia Internship Recognition",
-    date: "2025 • Telkom Indonesia",
-    description: "Recognized for outstanding contribution in QA testing and web software delivery.",
-    image: "https://images.unsplash.com/photo-1523289333742-be1143f6b766?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: "03",
-    title: "Telkom University Academic Excellence",
-    date: "2024 • Telkom University",
-    description: "Academic distinction in Software Engineering coursework and capstone project execution.",
-    image: "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: "04",
-    title: "Test Automation & Quality Engineering Badge",
-    date: "2024 • Certification",
-    description: "Advanced proficiency in Playwright, Selenium, and automated regression test suites.",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: "05",
-    title: "National Software & QA Competition Award",
-    date: "2023 • Award",
-    description: "Awarded top honor in software reliability, code quality, and UI/UX design QA.",
-    image: "https://images.unsplash.com/photo-1579389083078-4e7018379f7e?q=80&w=800&auto=format&fit=crop",
-  },
-];
-
-export function Achievements() {
-  const [activeId, setActiveId] = useState<string>(achievementsData[0].id);
+export function Achievements({ achievements }: AchievementsProps) {
+  const [activeId, setActiveId] = useState<string>(
+    achievements[0]?.id ?? "1"
+  );
 
   const activeAchievement =
-    achievementsData.find((a) => a.id === activeId) || achievementsData[0];
+    achievements.find((a) => a.id === activeId) || achievements[0];
+
+  if (!achievements.length) return null;
 
   return (
     <section className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10 reveal relative" id="achievements">
@@ -79,7 +42,7 @@ export function Achievements() {
           role="tablist"
           aria-label="Achievements list"
         >
-          {achievementsData.map((item) => {
+          {achievements.map((item) => {
             const isActive = item.id === activeId;
             return (
               <button
@@ -119,7 +82,7 @@ export function Achievements() {
                         isActive ? "text-[#888888]" : "text-[#555555]"
                       )}
                     >
-                      {item.date}
+                      {item.date} • {item.category}
                     </span>
                   </div>
                   <p
@@ -137,28 +100,30 @@ export function Achievements() {
         </div>
 
         {/* RIGHT COLUMN — ACHIEVEMENT A4 PORTRAIT IMAGE PREVIEW */}
-        <div className="flex justify-center lg:sticky lg:top-[100px]">
-          <div className="w-full max-w-[420px] rounded-3xl border border-white/10 bg-[#080808] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.75),inset_0_1px_rgba(255,255,255,0.08)] flex flex-col gap-4 hover:border-white/20 transition-colors duration-300">
-            <div className="w-full relative rounded-2xl border border-white/[0.08] bg-[#030303] overflow-hidden flex items-center justify-center" key={activeAchievement.id}>
-              <Image
-                src={activeAchievement.image}
-                alt={activeAchievement.title}
-                width={600}
-                height={848}
-                priority
-                unoptimized
-                className="w-full h-auto max-h-[480px] object-cover block rounded-[14px] hover:scale-[1.02] transition-transform duration-400"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-            </div>
+        {activeAchievement && (
+          <div className="flex justify-center lg:sticky lg:top-[100px]">
+            <div className="w-full max-w-[420px] rounded-3xl border border-white/10 bg-[#080808] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.75),inset_0_1px_rgba(255,255,255,0.08)] flex flex-col gap-4 hover:border-white/20 transition-colors duration-300">
+              <div className="w-full relative rounded-2xl border border-white/[0.08] bg-[#030303] overflow-hidden flex items-center justify-center" key={activeAchievement.id}>
+                <Image
+                  src={activeAchievement.image}
+                  alt={activeAchievement.title}
+                  width={600}
+                  height={848}
+                  priority
+                  unoptimized
+                  className="w-full h-auto max-h-[480px] object-cover block rounded-[14px] hover:scale-[1.02] transition-transform duration-400"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              </div>
 
-            <div className="pt-1 px-1">
-              <h4 className="text-base font-medium text-[#fafafa] m-0 mb-1">{activeAchievement.title}</h4>
-              <p className="text-xs text-[#999999] leading-[1.6] m-0 mb-2">{activeAchievement.description}</p>
-              <span className="text-[10px] text-[#666666] tracking-[0.06em] uppercase font-semibold">{activeAchievement.date}</span>
+              <div className="pt-1 px-1">
+                <h4 className="text-base font-medium text-[#fafafa] m-0 mb-1">{activeAchievement.title}</h4>
+                <p className="text-xs text-[#999999] leading-[1.6] m-0 mb-2">{activeAchievement.description}</p>
+                <span className="text-[10px] text-[#666666] tracking-[0.06em] uppercase font-semibold">{activeAchievement.date} • {activeAchievement.issuer}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
