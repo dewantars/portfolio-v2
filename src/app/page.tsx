@@ -16,6 +16,8 @@ import { getSkillGroups } from "@/lib/data/skills";
 import { getAchievements } from "@/lib/data/achievements";
 import { getSocialLinks } from "@/lib/data/socials";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const [profile, experiences, projects, skillGroups, achievements, socials] =
     await Promise.all([
