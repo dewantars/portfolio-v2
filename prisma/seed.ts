@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Seeding database with exact project data...')
 
-  // 1. Profile
+  // 1. Profile tset
   await prisma.profile.deleteMany()
   await prisma.profile.create({
     data: {
