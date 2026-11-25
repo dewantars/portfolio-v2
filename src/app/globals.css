@@ -175,8 +175,57 @@
 }
 
 .nav-link-line:hover::after,
-.nav-link-line:focus-visible::after {
+.nav-link-line:focus-visible::after,
+.nav-link-line--active::after {
   transform: scaleX(1);
+}
+
+/* Print / Export PDF styling for /cv Personnel Dossier */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .cv-print-sheet {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border-color: #cccccc !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .cv-print-grid {
+    display: block !important;
+  }
+
+  .cv-print-sheet * {
+    color: #111111 !important;
+    border-color: #d4d4d4 !important;
+    background: transparent !important;
+  }
+
+  .cv-print-muted {
+    color: #444444 !important;
+  }
+
+  .cv-print-break-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 /* Scroll reveal utility used by IntersectionObserver in scroll-reveal.tsx */

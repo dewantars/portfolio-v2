@@ -34,10 +34,16 @@ export function About({ profile }: AboutProps) {
     "Hello! I'm Dewanta, a Software Engineering student focused on building reliable, well-crafted digital experiences.";
 
   return (
-    <section
-      className="max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 border-b border-[var(--white-15)] reveal"
-      id="about"
-    >
+    <div className="relative w-full">
+      {/* Top transition shadow bridge continuing smoothly from Hero */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-36 md:h-52 bg-[linear-gradient(to_bottom,#000000_0%,rgba(0,0,0,0.72)_45%,transparent_100%)]"
+      />
+      <section
+        className="relative max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 border-b border-[var(--white-15)] reveal"
+        id="about"
+      >
       <SectionLabel index="01">MISSION BRIEF // ABOUT</SectionLabel>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.9fr] gap-10 lg:gap-16 items-end">
@@ -58,7 +64,7 @@ export function About({ profile }: AboutProps) {
         {disciplines.map((item) => (
           <div
             key={item.code}
-            className="p-6 md:p-7 border-r border-b border-[var(--white-15)] bg-[#000000] hover:bg-[var(--white-10)] transition-colors duration-200 flex flex-col justify-between min-h-[168px]"
+            className="p-6 md:p-7 border-r border-b border-[var(--white-15)] bg-[#000000]/65 hover:bg-[var(--white-10)] transition-colors duration-200 flex flex-col justify-between min-h-[168px]"
           >
             <div className="flex items-center justify-between mb-6">
               <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[var(--white-50)]">
@@ -78,5 +84,6 @@ export function About({ profile }: AboutProps) {
         ))}
       </div>
     </section>
+    </div>
   );
 }

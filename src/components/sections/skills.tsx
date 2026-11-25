@@ -49,7 +49,7 @@ export function Skills({ skillGroups }: SkillsProps) {
                 {group.skills.map((skill) => (
                   <div
                     key={skill}
-                    className="px-4 py-3 border-r border-b border-[var(--white-15)] bg-[#000000] hover:bg-[var(--white-10)] transition-colors duration-200 font-mono-tech text-xs tracking-[0.04em] text-[var(--white-80)]"
+                    className="px-4 py-3 border-r border-b border-[var(--white-15)] bg-[#000000]/65 hover:bg-[var(--white-10)] transition-colors duration-200 font-mono-tech text-xs tracking-[0.04em] text-[var(--white-80)]"
                   >
                     {skill}
                   </div>

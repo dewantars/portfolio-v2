@@ -90,7 +90,7 @@ export function Achievements({ achievements }: AchievementsProps) {
                   "w-full min-h-[64px] p-5 md:p-6 text-left border-b border-l-2 border-r border-[var(--white-15)] transition-colors duration-200 flex flex-col gap-2",
                   isActive
                     ? "border-l-[var(--white-100)] bg-[var(--white-10)]"
-                    : "border-l-transparent bg-[#000000] hover:bg-[var(--gray-60)]"
+                    : "border-l-transparent bg-[#000000]/65 hover:bg-[var(--gray-60)]"
                 )}
               >
                 <div className="flex flex-wrap justify-between items-baseline gap-3">
@@ -123,7 +123,7 @@ export function Achievements({ achievements }: AchievementsProps) {
           id="achievement-preview-panel"
           role="tabpanel"
           aria-labelledby={`achievement-tab-${activeAchievement.id}`}
-          className="lg:sticky lg:top-24 border border-[var(--white-15)] bg-[#000000]"
+          className="lg:sticky lg:top-24 border border-[var(--white-15)] bg-[#000000]/75"
         >
           <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--white-15)] bg-[var(--gray-60)]">
             <span className="font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-80)]">

@@ -1,4 +1,3 @@
-import { Navigation } from "@/components/sections/navigation";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
@@ -6,9 +5,8 @@ import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Achievements } from "@/components/sections/achievements";
 import { Contact } from "@/components/sections/contact";
-import { Footer } from "@/components/sections/footer";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { BackToTop } from "@/components/back-to-top";
+import { HomeInteractiveBackground } from "@/components/home-interactive-background";
 
 import { getProfile } from "@/lib/data/profile";
 import { getExperiences } from "@/lib/data/experience";
@@ -17,7 +15,7 @@ import { getSkillGroups } from "@/lib/data/skills";
 import { getAchievements } from "@/lib/data/achievements";
 import { getSocialLinks } from "@/lib/data/socials";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [profile, experiences, projects, skillGroups, achievements, socials] =
@@ -31,8 +29,8 @@ export default async function Home() {
     ]);
 
   return (
-    <div className="min-h-screen bg-[#000000] text-[var(--white-100)]">
-      <Navigation name={profile?.name} />
+    <>
+      <HomeInteractiveBackground />
       <main id="top">
         <Hero profile={profile} />
         <About profile={profile} />
@@ -42,9 +40,7 @@ export default async function Home() {
         <Achievements achievements={achievements} />
         <Contact socials={socials} />
       </main>
-      <Footer name={profile?.name} socials={socials} />
-      <BackToTop />
       <ScrollReveal />
-    </div>
+    </>
   );
 }

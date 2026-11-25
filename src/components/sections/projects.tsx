@@ -19,7 +19,7 @@ function MissionTelemetryFrame({ project }: { project: ProjectType }) {
   const accessStatus = getAccessStatus(project);
 
   return (
-    <div className="relative flex flex-col justify-between bg-[#000000] border-b lg:border-b-0 lg:border-r border-[var(--white-15)] min-h-[280px] lg:min-h-[340px]">
+    <div className="relative flex flex-col justify-between bg-[#000000]/55 border-b lg:border-b-0 lg:border-r border-[var(--white-15)] min-h-[280px] lg:min-h-[340px]">
       {/* Top telemetry bar */}
       <div className="flex items-center justify-between gap-4 px-5 py-3.5 border-b border-[var(--white-15)] bg-[var(--gray-60)]">
         <span className="font-mono-tech text-[11px] font-medium tracking-[0.16em] uppercase text-[var(--white-80)]">
@@ -121,7 +121,7 @@ export function Projects({ projects }: ProjectsProps) {
           {projects.map((project) => (
             <article
               key={project.id}
-              className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] border border-[var(--white-15)] hover:border-[var(--white-25)] bg-[#000000] transition-colors duration-200 reveal"
+              className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] border border-[var(--white-15)] hover:border-[var(--white-25)] bg-[#000000]/65 transition-colors duration-200 reveal"
             >
               <MissionTelemetryFrame project={project} />
 

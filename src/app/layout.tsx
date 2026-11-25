@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Navigation } from "@/components/sections/navigation";
+import { Footer } from "@/components/sections/footer";
+import { BackToTop } from "@/components/back-to-top";
+import { SpaceBackdrop } from "@/components/space-backdrop";
+import { getShellData } from "@/lib/data/shell";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -38,17 +43,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { profile, socials } = await getShellData();
+
   return (
     <html
       lang="en"
       className={`${barlow.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <div className="relative isolate min-h-screen text-[var(--white-100)] flex flex-col">
+          <SpaceBackdrop />
+          <Navigation name={profile?.name} />
+          <div className="flex-1">{children}</div>
+          <Footer name={profile?.name} socials={socials} />
+          <BackToTop />
+        </div>
+      </body>
     </html>
   );
 }

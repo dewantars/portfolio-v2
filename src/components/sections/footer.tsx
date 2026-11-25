@@ -14,7 +14,7 @@ export function Footer({ name, socials = [] }: FooterProps) {
   });
 
   return (
-    <footer className="bg-[#000000] border-t border-[var(--white-15)]">
+    <footer className="no-print bg-[#000000]/85 border-t border-[var(--white-15)]">
       <div className="max-w-[1320px] mx-auto px-5 py-7 md:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p className="font-mono-tech m-0 text-xs tracking-[0.12em] uppercase text-[var(--white-50)]">
           &copy; 2026 {displayName}

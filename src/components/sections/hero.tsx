@@ -19,9 +19,9 @@ export function Hero({ profile }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative min-h-[100svh] w-full flex flex-col justify-end overflow-hidden bg-[#000000] border-b border-[var(--white-15)]"
+      className="relative min-h-[100svh] w-full flex flex-col justify-end overflow-hidden bg-transparent"
     >
-      {/* Full-bleed atmospheric portrait backdrop with SpaceX monochrome vignette */}
+      {/* Full-bleed atmospheric portrait backdrop blending into deep-space canvas */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <Image
           src={photoUrl}
@@ -31,12 +31,14 @@ export function Hero({ profile }: HeroProps) {
           fetchPriority="high"
           unoptimized
           sizes="100vw"
-          className="object-cover object-[center_18%] lg:object-[72%_16%] grayscale contrast-[1.16] brightness-[0.62]"
+          className="object-cover object-[center_18%] lg:object-[72%_16%] grayscale contrast-[1.16] brightness-[0.58] opacity-[0.82]"
         />
-        {/* Bottom-up pitch black vignette (--black-80 -> #000000) */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,#000000_0%,rgba(0,0,0,0.82)_34%,rgba(0,0,0,0.5)_68%,rgba(0,0,0,0.45)_100%)]" />
+        {/* Bottom-up pure black vignette fading smoothly into the About section */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,#000000_0%,rgba(0,0,0,0.9)_18%,rgba(0,0,0,0.68)_38%,rgba(0,0,0,0.34)_68%,rgba(0,0,0,0.28)_100%)]" />
         {/* Left-to-right readability vignette for bottom-left anchored text */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000000_0%,rgba(0,0,0,0.8)_44%,rgba(0,0,0,0.25)_78%,rgba(0,0,0,0.4)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.68)_44%,rgba(0,0,0,0.14)_78%,rgba(0,0,0,0.24)_100%)]" />
+        {/* Dedicated bottom transition shadow bridge into About */}
+        <div className="absolute inset-x-0 bottom-0 h-32 md:h-44 bg-[linear-gradient(to_top,#000000_0%,rgba(0,0,0,0.82)_45%,transparent_100%)]" />
         {/* Minimalist flight-deck coordinate ticks (desktop) */}
         <div className="hidden lg:block absolute inset-y-0 right-12 w-px bg-[var(--white-15)]" />
         <div className="hidden lg:flex absolute top-28 right-12 items-center gap-3 pr-4">
