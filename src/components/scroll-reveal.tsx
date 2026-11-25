@@ -5,11 +5,16 @@ import { useEffect } from "react";
 /**
  * Client component that activates IntersectionObserver-based
  * scroll reveal animations for elements with the `.reveal` class.
- * Renders nothing — purely a side-effect component.
+ * Renders nothing, purely a side-effect component.
  */
 export function ScrollReveal() {
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

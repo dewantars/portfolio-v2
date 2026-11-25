@@ -1,55 +1,189 @@
 @import 'tailwindcss';
 
-@theme {
-  --color-bg: #050505;
-  --color-card: #0a0a0a;
-  --color-secondary: #141414;
-  --color-text: #fafafa;
-  --color-muted: #999999;
-  --color-faint: #666666;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-hover: rgba(255, 255, 255, 0.2);
-  --font-outfit: var(--font-outfit), 'Outfit', ui-sans-serif, system-ui, sans-serif;
-}
-
 :root {
-  color: #fafafa;
-  background: #050505;
-  font-family: var(--font-outfit), 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  /* SpaceX Industrial Aerospace Monochrome Tokens */
+  --bg-primary: #000000;
+  --white-100: rgba(240, 240, 250, 1);
+  --white-80: rgba(240, 240, 250, 0.8);
+  --white-60: rgba(240, 240, 250, 0.6);
+  --white-50: rgba(240, 240, 250, 0.5);
+  --white-25: rgba(255, 255, 255, 0.25);
+  --white-15: rgba(240, 240, 250, 0.15);
+  --white-10: rgba(240, 240, 250, 0.1);
+  --gray-80: rgba(37, 38, 40, 0.8);
+  --gray-60: rgba(37, 38, 40, 0.6);
+  --black-80: rgba(0, 0, 0, 0.8);
+  --black-50: rgba(0, 0, 0, 0.5);
+
+  color: var(--white-100);
+  background-color: var(--bg-primary);
+  font-family: var(--font-barlow), 'Barlow', ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
 }
 
-* {
-  box-sizing: border-box;
+@theme {
+  --color-bg: #000000;
+  --color-text: rgba(240, 240, 250, 1);
+  --color-muted: rgba(240, 240, 250, 0.6);
+  --color-meta: rgba(240, 240, 250, 0.5);
+  --color-border: rgba(240, 240, 250, 0.15);
+  --color-border-strong: rgba(255, 255, 255, 0.25);
+  --font-sans: var(--font-barlow), 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* Hide scrollbar globally for all browsers */
-::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-  background: transparent;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-radius: 0px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-primary);
+    color: var(--white-100);
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg-primary);
+    color: var(--white-80);
+    font-family: var(--font-barlow), 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  label[for],
+  [role='tab'],
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--white-100);
+    outline-offset: 3px;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.font-display {
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
-  margin: 0;
-  background: #050505;
-  color: #fafafa;
-  overflow-x: hidden;
+.font-mono-tech {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Scroll reveal utility classes used by IntersectionObserver in scroll-reveal.tsx */
+/* SpaceX primary rectangular CTA with bottom-up solid white fill */
+.cta-aerospace {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 28px;
+  border: 2px solid var(--white-100);
+  background-color: transparent;
+  color: var(--white-100);
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-aerospace::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--white-100);
+  transform: translateY(102%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+
+.cta-aerospace:hover,
+.cta-aerospace:focus-visible {
+  color: #000000;
+}
+
+.cta-aerospace:hover::before,
+.cta-aerospace:focus-visible::before {
+  transform: translateY(0);
+}
+
+.cta-aerospace-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--white-25);
+  background-color: transparent;
+  color: var(--white-80);
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.cta-aerospace-secondary:hover,
+.cta-aerospace-secondary:focus-visible {
+  border-color: var(--white-100);
+  color: var(--white-100);
+  background-color: var(--white-10);
+}
+
+/* Navbar left-to-right thin underline */
+.nav-link-line {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.nav-link-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 1px;
+  background-color: var(--white-100);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-line:hover::after,
+.nav-link-line:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Scroll reveal utility used by IntersectionObserver in scroll-reveal.tsx */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.is-visible {
@@ -57,13 +191,22 @@ body {
   transform: translateY(0);
 }
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  to {
+
+  .reveal,
+  .reveal.is-visible {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
+    transition: none;
+  }
+
+  .cta-aerospace,
+  .cta-aerospace::before,
+  .cta-aerospace-secondary,
+  .nav-link-line::after {
+    transition: none;
   }
 }

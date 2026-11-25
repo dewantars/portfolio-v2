@@ -1,59 +1,63 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Arrow, SectionLabel } from "@/components/ui/icons";
-import { cn } from "@/lib/utils";
 import { Project as ProjectType } from "@prisma/client";
 
 interface ProjectsProps {
   projects: ProjectType[];
 }
 
-const themeGradients: Record<string, string> = {
-  violet: "bg-[radial-gradient(circle_at_65%_30%,#241c2a,#0a090c_60%)]",
-  sky: "bg-[radial-gradient(circle_at_30%_40%,#14242b,#090b0c_60%)]",
-  emerald: "bg-[radial-gradient(circle_at_30%_70%,#14241e,#090b0a_60%)]",
-  amber: "bg-[radial-gradient(circle_at_70%_40%,#272116,#0c0b08_60%)]",
-  green: "bg-[radial-gradient(circle_at_50%_50%,#11231a,#090b0a_60%)]",
-};
+function getAccessStatus(project: ProjectType): string {
+  if (project.liveUrl && project.github) return "PUBLIC // LIVE + SOURCE";
+  if (project.liveUrl) return "PUBLIC // LIVE DEPLOYMENT";
+  if (project.github) return "PUBLIC // OPEN SOURCE";
+  return "INTERNAL // CONFIDENTIAL";
+}
 
-function ProjectVisual({ project }: { project: ProjectType }) {
+function MissionTelemetryFrame({ project }: { project: ProjectType }) {
+  const accessStatus = getAccessStatus(project);
+
   return (
-    <div
-      className={cn(
-        "min-h-[340px] lg:min-h-[400px] p-6 lg:p-[50px] flex items-center overflow-hidden relative bg-[#0c0c0d]",
-        themeGradients[project.theme] || themeGradients.violet
-      )}
-    >
-      <div className="relative w-full max-w-[660px] mx-auto border border-white/15 rounded-xl bg-[#0b0c0e] shadow-[0_30px_70px_rgba(0,0,0,0.5)] [transform:perspective(900px)_rotateX(2deg)_rotateY(-3deg)] group-hover:[transform:perspective(900px)_rotateX(0)_rotateY(0)_scale(1.02)] transition-transform duration-400 overflow-hidden">
-        <div className="h-9 px-4 flex items-center justify-between border-b border-white/10 bg-[#0e0f12]">
-          <div className="flex items-center gap-[7px]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+    <div className="relative flex flex-col justify-between bg-[#000000] border-b lg:border-b-0 lg:border-r border-[var(--white-15)] min-h-[280px] lg:min-h-[340px]">
+      {/* Top telemetry bar */}
+      <div className="flex items-center justify-between gap-4 px-5 py-3.5 border-b border-[var(--white-15)] bg-[var(--gray-60)]">
+        <span className="font-mono-tech text-[11px] font-medium tracking-[0.16em] uppercase text-[var(--white-80)]">
+          MISSION // {project.number}
+        </span>
+        <span className="font-mono-tech text-[11px] tracking-[0.12em] uppercase text-[var(--white-50)]">
+          {accessStatus}
+        </span>
+      </div>
+
+      {/* Central structural blueprint readout */}
+      <div className="relative flex-1 p-6 md:p-8 flex flex-col justify-between gap-8">
+        <div className="flex items-start justify-between gap-4">
+          <div className="font-display text-[clamp(56px,6vw,88px)] font-bold leading-none tracking-[0.04em] text-[var(--white-100)]">
+            {project.number}
           </div>
-          <b className="text-[10px] tracking-[0.14em] text-[#666666] font-semibold">{project.number} / CASE STUDY</b>
+          <div className="text-right font-mono-tech text-[11px] leading-[1.6] tracking-[0.12em] uppercase text-[var(--white-50)]">
+            <div>CLASS // {project.type}</div>
+            <div>MODULES // {String(project.stack.length).padStart(2, "0")}</div>
+          </div>
         </div>
-        <div className="min-h-[220px] p-[18px] grid grid-cols-[54px_1fr] gap-[18px] bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px]">
-          <div className="flex flex-col gap-2.5 py-1">
-            <i className="w-[18px] h-[18px] rounded-[5px] bg-white/15 block" />
-            <i className="w-[18px] h-[18px] rounded-[5px] bg-white/10 block" />
-            <i className="w-[18px] h-[18px] rounded-[5px] bg-white/10 block" />
-            <i className="w-[18px] h-[18px] rounded-[5px] bg-white/10 block" />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="text-[9px] tracking-[0.16em] text-[#777777] font-medium">WORKSPACE OVERVIEW</div>
-            <div className="w-[130px] h-3 rounded bg-white/20" />
-            <div className="grid grid-cols-3 gap-2 my-1">
-              <span className="h-10 rounded-md border border-white/10 bg-white/[0.04]" />
-              <span className="h-10 rounded-md border border-white/10 bg-white/[0.04]" />
-              <span className="h-10 rounded-md border border-white/10 bg-white/[0.04]" />
+
+        {/* Hairline telemetry specification rows */}
+        <div className="border-t border-[var(--white-15)] pt-4 grid grid-cols-2 gap-4">
+          <div>
+            <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
+              ASSIGNED ROLE
             </div>
-            <div className="h-20 p-2.5 rounded-lg border border-white/10 bg-white/[0.03] flex items-end gap-2">
-              <i className="flex-1 bg-white/20 rounded-t h-[40%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[75%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[55%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[90%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[60%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[80%]" />
-              <i className="flex-1 bg-white/20 rounded-t h-[45%]" />
+            <div className="font-mono-tech text-xs text-[var(--white-80)] break-words">
+              {project.role}
+            </div>
+          </div>
+          <div>
+            <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
+              PRIMARY SYSTEMS
+            </div>
+            <div className="font-mono-tech text-xs text-[var(--white-80)] break-words">
+              {project.stack.slice(0, 3).join(" / ")}
             </div>
           </div>
         </div>
@@ -63,91 +67,239 @@ function ProjectVisual({ project }: { project: ProjectType }) {
 }
 
 export function Projects({ projects }: ProjectsProps) {
+  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedProject(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+      lastTriggerRef.current?.focus();
+    };
+  }, [selectedProject]);
+
   return (
-    <section className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10" id="projects">
+    <section
+      className="max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 border-b border-[var(--white-15)]"
+      id="projects"
+    >
       <div className="reveal">
-        <SectionLabel>SELECTED WORK</SectionLabel>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-[60px] mb-14 lg:mb-[88px]">
-          <h2 className="m-0 text-[43px] md:text-[clamp(45px,5.6vw,78px)] leading-[1.04] tracking-[-0.05em] font-medium text-[#fafafa]">
-            A collection of projects
-            <br />
-            I&apos;ve worked on.
+        <SectionLabel index="03">FEATURED MISSIONS // TELEMETRY LOG</SectionLabel>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12 mb-12 lg:mb-16">
+          <h2 className="font-display m-0 text-[clamp(34px,5vw,64px)] leading-[1.02] tracking-[0.04em] font-bold uppercase text-[var(--white-100)]">
+            MISSION SHOWCASE
           </h2>
-          <p className="max-w-[380px] mb-1 text-[#999999] leading-[1.6]">
-            A selection of products shaped through engineering, quality, and
-            close attention to people.
+          <p className="m-0 max-w-[420px] text-base leading-[1.6] text-[var(--white-60)]">
+            Production web applications, mobile platforms, and automated quality
+            verification suites engineered from architecture to release.
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {projects.map((project) => (
-          <article
-            className={cn(
-              "min-w-0 border border-white/10 rounded-[20px] bg-[#0a0a0a] overflow-hidden transition-all duration-350 hover:-translate-y-1.5 hover:border-white/20 group reveal",
-              project.type === "featured" && "lg:col-span-full lg:grid lg:grid-cols-[1.4fr_0.6fr]",
-              project.type === "wide" && "lg:col-span-full lg:grid lg:grid-cols-[0.8fr_1.2fr]"
-            )}
-            key={project.id}
-          >
-            <ProjectVisual project={project} />
-            <div className="p-6 lg:p-8 flex flex-col justify-between gap-10 lg:gap-14 border-t border-white/10 lg:border-t-0">
-              <div>
-                <div className="flex items-center justify-between gap-3 mb-1.5">
-                  <span className="text-[#666666] text-xs font-semibold tracking-[0.1em]">{project.number}</span>
-                  <span className="text-[#888888] text-[11px] font-medium tracking-[0.03em] px-2 py-[3px] rounded-md bg-white/[0.05] border border-white/[0.08]">
-                    {project.role}
-                  </span>
+
+      {projects.length === 0 ? (
+        <div className="border border-[var(--white-15)] p-8 text-center">
+          <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-50)] m-0">
+            NO MISSION RECORDS CURRENTLY LOGGED
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          {projects.map((project) => (
+            <article
+              key={project.id}
+              className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] border border-[var(--white-15)] hover:border-[var(--white-25)] bg-[#000000] transition-colors duration-200 reveal"
+            >
+              <MissionTelemetryFrame project={project} />
+
+              <div className="p-6 md:p-8 lg:p-10 flex flex-col justify-between gap-8 min-w-0">
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-50)]">
+                      INDEX {project.number}
+                    </span>
+                    <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-60)]">
+                      {project.role}
+                    </span>
+                  </div>
+
+                  <h3 className="font-display m-0 mb-4 text-3xl md:text-4xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)]">
+                    {project.name}
+                  </h3>
+
+                  <p className="m-0 text-base leading-[1.6] text-[var(--white-80)]">
+                    {project.description}
+                  </p>
                 </div>
-                <h3 className="m-0 mb-3.5 text-2xl lg:text-[28px] font-medium tracking-[-0.02em] text-[#fafafa]">
-                  {project.name}
-                </h3>
-                <p className="text-[#999999] text-sm md:text-[15px] leading-[1.65] m-0">
-                  {project.description}
-                </p>
+
+                <div className="pt-6 border-t border-[var(--white-15)] flex flex-col gap-6">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)]">
+                      TECH STACK TELEMETRY
+                    </span>
+                    <p className="font-mono-tech m-0 text-xs md:text-[13px] leading-[1.6] text-[var(--white-60)] break-words">
+                      {project.stack.join("  /  ")}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        lastTriggerRef.current = e.currentTarget;
+                        setSelectedProject(project);
+                      }}
+                      className="inline-flex items-center justify-center gap-3 min-h-[44px] px-5 border border-[var(--white-100)] bg-transparent text-[var(--white-100)] font-display text-xs font-bold tracking-[0.14em] uppercase hover:bg-[var(--white-100)] hover:text-[#000000] transition-colors duration-200"
+                    >
+                      <span>VIEW MISSION</span>
+                      <Arrow />
+                    </button>
+
+                    <div className="flex flex-wrap items-center gap-5">
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 min-h-[44px] font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-80)] hover:text-[var(--white-100)] transition-colors duration-200"
+                        >
+                          <span>LIVE DEPLOYMENT</span>
+                          <Arrow diagonal />
+                        </a>
+                      )}
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 min-h-[44px] font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-80)] hover:text-[var(--white-100)] transition-colors duration-200"
+                        >
+                          <span>SOURCE REPO</span>
+                          <Arrow diagonal />
+                        </a>
+                      )}
+                      {!project.liveUrl && !project.github && (
+                        <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-50)]">
+                          CONFIDENTIAL // INTERNAL SYSTEM
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-5 pt-5 border-t border-white/10">
-                <div className="flex flex-wrap gap-[7px]">
-                  {project.stack.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-[7px] text-[#aaaaaa] text-[10px] border border-white/10 rounded-full bg-[#0b0b0b]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+            </article>
+          ))}
+        </div>
+      )}
+
+      {/* Mission Dossier Modal */}
+      {selectedProject && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-[var(--black-80)]"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedProject(null);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mission-dossier-title"
+            className="w-full max-w-[720px] max-h-[90vh] overflow-y-auto bg-[#000000] border border-[var(--white-100)] p-6 md:p-10"
+          >
+            <div className="flex items-center justify-between gap-4 pb-5 mb-6 border-b border-[var(--white-15)]">
+              <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)]">
+                MISSION DOSSIER // {selectedProject.number}
+              </span>
+              <button
+                ref={closeButtonRef}
+                type="button"
+                onClick={() => setSelectedProject(null)}
+                className="min-h-[44px] px-4 border border-[var(--white-25)] font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-100)] hover:bg-[var(--white-100)] hover:text-[#000000] transition-colors duration-200"
+              >
+                CLOSE [ESC]
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-50)] mb-2 m-0">
+                {selectedProject.role}
+              </p>
+              <h3
+                id="mission-dossier-title"
+                className="font-display text-3xl md:text-5xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)] m-0 mb-5"
+              >
+                {selectedProject.name}
+              </h3>
+              <p className="text-base leading-[1.6] text-[var(--white-80)] m-0">
+                {selectedProject.description}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-5 border-t border-b border-[var(--white-15)] mb-6">
+              <div>
+                <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
+                  ACCESS CLASSIFICATION
                 </div>
-                <div className="flex items-center gap-4 pt-1">
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1.5 text-[#bbbbbb] text-xs hover:text-white transition-colors duration-200"
-                    >
-                      GitHub <Arrow diagonal />
-                    </a>
-                  )}
-                  {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1.5 text-[#bbbbbb] text-xs hover:text-white transition-colors duration-200"
-                    >
-                      Live Demo <Arrow diagonal />
-                    </a>
-                  )}
-                  {!project.github && !project.liveUrl && (
-                    <span className="inline-flex items-center gap-1.5 text-[#666666] text-[11px] tracking-[0.03em]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#555555]" /> Confidential / Internal Project
-                    </span>
-                  )}
+                <div className="font-mono-tech text-xs uppercase text-[var(--white-80)]">
+                  {getAccessStatus(selectedProject)}
+                </div>
+              </div>
+              <div>
+                <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
+                  SYSTEM STACK
+                </div>
+                <div className="font-mono-tech text-xs text-[var(--white-80)] break-words">
+                  {selectedProject.stack.join(" / ")}
                 </div>
               </div>
             </div>
-          </article>
-        ))}
-      </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              {selectedProject.liveUrl && (
+                <a
+                  href={selectedProject.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="cta-aerospace gap-2.5"
+                >
+                  <span>LAUNCH LIVE DEPLOYMENT</span>
+                  <Arrow diagonal />
+                </a>
+              )}
+              {selectedProject.github && (
+                <a
+                  href={selectedProject.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="cta-aerospace-secondary gap-2.5"
+                >
+                  <span>OPEN REPOSITORY</span>
+                  <Arrow diagonal />
+                </a>
+              )}
+              {!selectedProject.liveUrl && !selectedProject.github && (
+                <p className="font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-60)] m-0">
+                  EXTERNAL REPOSITORY AND LIVE URL ARE RESTRICTED UNDER CLIENT / INTERNAL NDA.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

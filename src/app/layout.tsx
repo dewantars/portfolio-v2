@@ -1,36 +1,40 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Barlow, Barlow_Condensed, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
+const barlow = Barlow({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-outfit",
+  variable: "--font-barlow",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-barlow-condensed",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Dewanta Rahma Satria — Software Engineer & QA",
+  title: "Dewanta Rahma Satria | Software Engineer & QA",
   description:
     "Software Engineering student focused on software development, quality assurance, test automation, and UI/UX.",
-  icons: {
-    icon: [
-      {
-        url: "https://api.iconify.design/lucide:code-2.svg?color=%23ffffff",
-        type: "image/svg+xml",
-      },
-    ],
-    shortcut: ["https://api.iconify.design/lucide:code-2.svg?color=%23ffffff"],
-    apple: ["https://api.iconify.design/lucide:code-2.svg?color=%23ffffff"],
-  },
   openGraph: {
-    title: "Dewanta Rahma Satria — Software Engineer & QA",
+    title: "Dewanta Rahma Satria | Software Engineer & QA",
     description:
       "Software Engineering student focused on software development, quality assurance, test automation, and UI/UX.",
     type: "website",
   },
   other: {
-    "theme-color": "#050505",
+    "theme-color": "#000000",
   },
 };
 
@@ -40,7 +44,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={outfit.variable}>
+    <html
+      lang="en"
+      className={`${barlow.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

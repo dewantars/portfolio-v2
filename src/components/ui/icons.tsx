@@ -1,10 +1,22 @@
-export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
+export function Arrow({
+  diagonal = false,
+  up = false,
+}: {
+  diagonal?: boolean;
+  up?: boolean;
+}) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      {diagonal ? (
-        <path d="M7 17 17 7M8 7h9v9" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="w-4 h-4 fill-none stroke-current stroke-[1.75] shrink-0"
+    >
+      {up ? (
+        <path d="M12 19V5M7 10L12 5L17 10" />
+      ) : diagonal ? (
+        <path d="M6 18L18 6M8 6H18V16" />
       ) : (
-        <path d="M5 12h14m-5-5 5 5-5 5" />
+        <path d="M4 12H19M14 7L19 12L14 17" />
       )}
     </svg>
   );
@@ -12,58 +24,71 @@ export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 
 export function MailIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22,6 12,13 2,6" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.6]">
+      <rect x="2" y="4" width="20" height="16" />
+      <polyline points="2,5 12,13 22,5" />
     </svg>
   );
 }
 
 export function FileTextIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.6]">
+      <polygon points="14,2 4,2 4,22 20,22 20,8" />
+      <polyline points="14,2 14,8 20,8" />
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
-      <polyline points="10 9 9 9 8 9" />
     </svg>
   );
 }
 
 export function InstagramIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.6]">
+      <rect x="3" y="3" width="18" height="18" />
+      <circle cx="12" cy="12" r="4" />
+      <rect x="16.5" y="6.5" width="1" height="1" fill="currentColor" />
     </svg>
   );
 }
 
 export function LinkedinIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect x="2" y="9" width="4" height="12" />
-      <circle cx="4" cy="4" r="2" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.6]">
+      <rect x="3" y="3" width="18" height="18" />
+      <line x1="8" y1="11" x2="8" y2="17" />
+      <line x1="8" y1="7" x2="8" y2="8.5" />
+      <path d="M12 17V11H15.5V17" />
     </svg>
   );
 }
 
 export function GithubIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
-      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.6]">
+      <path d="M9 19C5 20.5 5 16.5 3 16M15 22V18.2C15 17 14.6 16.2 14 15.6C17.2 15.2 20.5 14 20.5 8.6C20.5 7.2 20 5.9 19 4.9C19.4 3.8 19.4 2.6 19 1.5C19 1.5 17.8 1.1 15 3C12.7 2.4 10.3 2.4 8 3C5.2 1.1 4 1.5 4 1.5C3.6 2.6 3.6 3.8 4 4.9C3 5.9 2.5 7.2 2.5 8.6C2.5 14 5.8 15.2 9 15.6C8.4 16.2 8 17 8 18.2V22" />
     </svg>
   );
 }
 
-export function SectionLabel({ children }: { children: React.ReactNode }) {
+export function SectionLabel({
+  index,
+  children,
+}: {
+  index?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center gap-3 mb-10 md:mb-14 text-[#999999] text-[11px] font-semibold tracking-[0.16em] uppercase">
-      <span className="w-7 h-[1px] bg-[#777777]" />
-      {children}
+    <div className="flex items-center gap-4 mb-8 md:mb-10">
+      {index && (
+        <span className="font-mono-tech text-[11px] font-medium tracking-[0.16em] text-[var(--white-50)]">
+          [{index}]
+        </span>
+      )}
+      <span className="w-8 h-px bg-[var(--white-25)]" aria-hidden="true" />
+      <span className="font-mono-tech text-[11px] font-medium tracking-[0.16em] uppercase text-[var(--white-60)]">
+        {children}
+      </span>
     </div>
   );
 }

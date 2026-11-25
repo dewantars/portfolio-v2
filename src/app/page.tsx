@@ -8,6 +8,7 @@ import { Achievements } from "@/components/sections/achievements";
 import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/sections/footer";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { BackToTop } from "@/components/back-to-top";
 
 import { getProfile } from "@/lib/data/profile";
 import { getExperiences } from "@/lib/data/experience";
@@ -30,8 +31,8 @@ export default async function Home() {
     ]);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_50%_-15%,rgba(255,255,255,0.07),transparent_25%)] bg-[#050505] text-[#fafafa]">
-      <Navigation />
+    <div className="min-h-screen bg-[#000000] text-[var(--white-100)]">
+      <Navigation name={profile?.name} />
       <main id="top">
         <Hero profile={profile} />
         <About profile={profile} />
@@ -41,7 +42,8 @@ export default async function Home() {
         <Achievements achievements={achievements} />
         <Contact socials={socials} />
       </main>
-      <Footer name={profile?.name} />
+      <Footer name={profile?.name} socials={socials} />
+      <BackToTop />
       <ScrollReveal />
     </div>
   );

@@ -5,39 +5,75 @@ interface AboutProps {
   profile: Profile | null;
 }
 
+const disciplines = [
+  {
+    code: "01",
+    title: "Software Engineering Student",
+    detail: "System design, data structures, and production software delivery.",
+  },
+  {
+    code: "02",
+    title: "Quality Assurance",
+    detail: "End-to-end Playwright automation, API validation, and load testing.",
+  },
+  {
+    code: "03",
+    title: "Full-Stack Development",
+    detail: "Next.js, React, Laravel, and PostgreSQL web applications.",
+  },
+  {
+    code: "04",
+    title: "UI/UX Engineering",
+    detail: "Design verification, accessibility checks, and interface precision.",
+  },
+];
+
 export function About({ profile }: AboutProps) {
-  const summary = profile?.summary ?? "Hello! I'm Dewanta, a Software Engineering student focused on building reliable, well-crafted digital experiences.";
+  const summary =
+    profile?.summary ??
+    "Hello! I'm Dewanta, a Software Engineering student focused on building reliable, well-crafted digital experiences.";
 
   return (
-    <section className="max-w-[1320px] mx-auto px-5 py-[88px] md:px-7 md:py-[110px] lg:px-8 lg:py-[144px] border-t border-white/10 reveal" id="about">
-      <SectionLabel>ABOUT ME</SectionLabel>
-      <div className="grid grid-cols-1 lg:grid-cols-[1.65fr_0.65fr] gap-12 lg:gap-[9vw] items-end">
-        <h2 className="max-w-[850px] m-0 text-[43px] md:text-[clamp(45px,5.6vw,78px)] leading-[1.04] tracking-[-0.05em] font-medium text-[#fafafa]">
-          I build software with a strong focus on quality, usability, and
-          detail.
+    <section
+      className="max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 border-b border-[var(--white-15)] reveal"
+      id="about"
+    >
+      <SectionLabel index="01">MISSION BRIEF // ABOUT</SectionLabel>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.9fr] gap-10 lg:gap-16 items-end">
+        <h2 className="font-display m-0 text-[clamp(34px,5vw,64px)] leading-[1.02] tracking-[0.04em] font-bold uppercase text-[var(--white-100)]">
+          ENGINEERING SOFTWARE WITH VERIFIABLE QUALITY AND STRUCTURAL CLARITY.
         </h2>
-        <div className="max-w-[650px] flex flex-col gap-4 text-[#999999] text-base leading-[1.7]">
-          <p>{summary}</p>
-          <p>
-            I build software where engineering precision meets thoughtful design,
-            with a focus on quality, usability, and reliability.
+        <div className="flex flex-col gap-4 text-[var(--white-80)] text-base leading-[1.6]">
+          <p className="m-0">{summary}</p>
+          <p className="m-0 text-[var(--white-60)]">
+            I combine full-stack implementation with disciplined quality assurance,
+            ensuring every release holds up under real user workflows and edge cases.
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-14 lg:mt-[88px]">
-        {[
-          "Software Engineering Student",
-          "Quality Assurance",
-          "Software Engineer",
-          "UI/UX Designer",
-        ].map((item, index) => (
+
+      {/* Hairline spec strip replacing rounded gradient cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-[var(--white-15)] mt-14 lg:mt-20">
+        {disciplines.map((item) => (
           <div
-            className="min-h-[145px] lg:min-h-[176px] p-[22px] flex flex-col border border-white/10 rounded-2xl bg-gradient-to-br from-[#0d0d0d] to-[#080808] hover:-translate-y-1 hover:border-white/20 transition-all duration-200 group"
-            key={item}
+            key={item.code}
+            className="p-6 md:p-7 border-r border-b border-[var(--white-15)] bg-[#000000] hover:bg-[var(--white-10)] transition-colors duration-200 flex flex-col justify-between min-h-[168px]"
           >
-            <span className="text-[#555555] text-[10px] tracking-[0.12em]">0{index + 1}</span>
-            <p className="max-w-[170px] mt-auto text-[17px] leading-[1.25] text-[#fafafa] font-medium">{item}</p>
-            <div className="w-[5px] h-[5px] mt-5 ml-auto rounded-full bg-[#555555] group-hover:bg-[#888888] transition-colors duration-200" />
+            <div className="flex items-center justify-between mb-6">
+              <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[var(--white-50)]">
+                SPEC // {item.code}
+              </span>
+              <span className="w-2 h-2 border border-[var(--white-25)]" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="font-display m-0 mb-2 text-lg font-bold tracking-[0.05em] uppercase text-[var(--white-100)]">
+                {item.title}
+              </h3>
+              <p className="m-0 text-sm leading-[1.5] text-[var(--white-60)]">
+                {item.detail}
+              </p>
+            </div>
           </div>
         ))}
       </div>
