@@ -4,18 +4,18 @@ import { useState } from "react";
 import Image from "next/image";
 import { Arrow, SectionLabel } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import { Achievement as AchievementType } from "@prisma/client";
+import type { CertificationDTO } from "@/lib/types/portfolio";
 
 interface AchievementsProps {
-  achievements: AchievementType[];
+  certifications: CertificationDTO[];
 }
 
-export function Achievements({ achievements }: AchievementsProps) {
+export function Achievements({ certifications }: AchievementsProps) {
   const [activeId, setActiveId] = useState<string>(
-    achievements[0]?.id ?? ""
+    certifications[0]?.id ?? ""
   );
 
-  if (!achievements.length) {
+  if (!certifications.length) {
     return (
       <section
         className="max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 border-b border-[var(--white-15)] reveal"
@@ -33,19 +33,21 @@ export function Achievements({ achievements }: AchievementsProps) {
 
   const activeIndex = Math.max(
     0,
-    achievements.findIndex((a) => a.id === activeId)
+    certifications.findIndex((a) => a.id === activeId)
   );
-  const activeAchievement = achievements[activeIndex] ?? achievements[0];
+  const activeCert = certifications[activeIndex] ?? certifications[0];
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "ArrowDown" || e.key === "ArrowRight") {
       e.preventDefault();
-      const next = achievements[(index + 1) % achievements.length];
+      const next = certifications[(index + 1) % certifications.length];
       setActiveId(next.id);
     } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
       e.preventDefault();
       const prev =
-        achievements[(index - 1 + achievements.length) % achievements.length];
+        certifications[
+          (index - 1 + certifications.length) % certifications.length
+        ];
       setActiveId(prev.id);
     }
   };
@@ -73,8 +75,8 @@ export function Achievements({ achievements }: AchievementsProps) {
           role="tablist"
           aria-label="Certifications and achievements"
         >
-          {achievements.map((item, index) => {
-            const isActive = item.id === activeAchievement.id;
+          {certifications.map((item, index) => {
+            const isActive = item.id === activeCert.id;
             return (
               <button
                 key={item.id}
@@ -103,17 +105,19 @@ export function Achievements({ achievements }: AchievementsProps) {
                     {item.title}
                   </h3>
                   <span className="font-mono-tech text-[11px] tracking-[0.12em] uppercase text-[var(--white-50)] shrink-0">
-                    {item.date} / {item.category}
+                    {item.issueDate} / {item.category}
                   </span>
                 </div>
-                <p
-                  className={cn(
-                    "m-0 text-sm leading-[1.55] transition-colors duration-200",
-                    isActive ? "text-[var(--white-80)]" : "text-[var(--white-50)]"
-                  )}
-                >
-                  {item.description}
-                </p>
+                {item.description && (
+                  <p
+                    className={cn(
+                      "m-0 text-sm leading-[1.55] transition-colors duration-200",
+                      isActive ? "text-[var(--white-80)]" : "text-[var(--white-50)]"
+                    )}
+                  >
+                    {item.description}
+                  </p>
+                )}
               </button>
             );
           })}
@@ -122,44 +126,61 @@ export function Achievements({ achievements }: AchievementsProps) {
         <div
           id="achievement-preview-panel"
           role="tabpanel"
-          aria-labelledby={`achievement-tab-${activeAchievement.id}`}
+          aria-labelledby={`achievement-tab-${activeCert.id}`}
           className="lg:sticky lg:top-24 border border-[var(--white-15)] bg-[#000000]/75"
         >
           <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--white-15)] bg-[var(--gray-60)]">
             <span className="font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-80)]">
-              DOCUMENT // 0{activeIndex + 1}
+              DOCUMENT // {String(activeIndex + 1).padStart(2, "0")}
             </span>
             <span className="font-mono-tech text-[11px] tracking-[0.12em] uppercase text-[var(--white-50)]">
-              {activeAchievement.date}
+              {activeCert.issueDate}
             </span>
           </div>
 
-          <div className="relative w-full aspect-[4/5] max-h-[460px] bg-[#000000] overflow-hidden border-b border-[var(--white-15)]">
-            <Image
-              src={activeAchievement.image}
-              alt={activeAchievement.title}
-              width={600}
-              height={848}
-              unoptimized
-              className="w-full h-full object-cover block grayscale contrast-[1.08]"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8)_0%,transparent_45%)] pointer-events-none" />
+          <div className="relative w-full aspect-[4/5] max-h-[460px] bg-[#000000] overflow-hidden border-b border-[var(--white-15)] flex items-center justify-center">
+            {activeCert.imageUrl ? (
+              <>
+                <Image
+                  src={activeCert.imageUrl}
+                  alt={activeCert.title}
+                  width={600}
+                  height={848}
+                  unoptimized
+                  className="w-full h-full object-cover block grayscale contrast-[1.08]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8)_0%,transparent_45%)] pointer-events-none" />
+              </>
+            ) : (
+              <span className="font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-50)]">
+                NO CERTIFICATE PLATE UPLOADED
+              </span>
+            )}
           </div>
 
           <div className="p-5 md:p-6 flex flex-col gap-3">
             <h4 className="font-display m-0 text-xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)]">
-              {activeAchievement.title}
+              {activeCert.title}
             </h4>
-            <p className="m-0 text-sm leading-[1.6] text-[var(--white-80)]">
-              {activeAchievement.description}
-            </p>
-            <div className="pt-3 border-t border-[var(--white-15)] flex items-center justify-between gap-4">
-              <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-50)]">
-                ISSUER // {activeAchievement.issuer}
-              </span>
-              {activeAchievement.credentialUrl && (
+            {activeCert.description && (
+              <p className="m-0 text-sm leading-[1.6] text-[var(--white-80)]">
+                {activeCert.description}
+              </p>
+            )}
+            <div className="pt-3 border-t border-[var(--white-15)] flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-50)]">
+                  ISSUER // {activeCert.issuer}
+                </span>
+                {activeCert.credentialId && (
+                  <span className="font-mono-tech text-[10px] tracking-[0.12em] uppercase text-[var(--white-60)]">
+                    ID // {activeCert.credentialId}
+                  </span>
+                )}
+              </div>
+              {activeCert.verificationUrl && (
                 <a
-                  href={activeAchievement.credentialUrl}
+                  href={activeCert.verificationUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 min-h-[44px] font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-100)] hover:underline"

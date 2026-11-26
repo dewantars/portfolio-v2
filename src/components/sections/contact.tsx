@@ -7,24 +7,23 @@ import {
   LinkedinIcon,
   GithubIcon,
 } from "@/components/ui/icons";
-import { SocialLink } from "@prisma/client";
+import type { ContactChannel } from "@/lib/data/site-config";
+import type { SiteConfigDTO } from "@/lib/types/portfolio";
 
 interface ContactProps {
-  socials: SocialLink[];
+  siteConfig: SiteConfigDTO;
+  channels: ContactChannel[];
 }
 
-const iconMap: Record<string, React.ComponentType> = {
+const iconMap: Record<ContactChannel["icon"], React.ComponentType> = {
   MailIcon,
   FileTextIcon,
-  DocumentIcon: FileTextIcon,
   InstagramIcon,
   LinkedinIcon,
-  LinkedInIcon: LinkedinIcon,
   GithubIcon,
-  GitHubIcon: GithubIcon,
 };
 
-export function Contact({ socials }: ContactProps) {
+export function Contact({ siteConfig, channels }: ContactProps) {
   return (
     <section
       className="max-w-[1320px] mx-auto px-5 py-20 md:px-8 md:py-28 lg:py-36 reveal"
@@ -34,17 +33,18 @@ export function Contact({ socials }: ContactProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-start">
         <div>
+          <p className="font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-50)] m-0 mb-3">
+            STATUS // {siteConfig.availabilityStatus}
+          </p>
           <h2 className="font-display m-0 mb-5 text-[clamp(38px,6vw,76px)] font-bold leading-[0.98] tracking-[0.04em] uppercase text-[var(--white-100)]">
-            ESTABLISH DIRECT LINK.
+            {siteConfig.contactHeadline}
           </h2>
           <p className="m-0 max-w-[520px] text-base leading-[1.6] text-[var(--white-80)]">
-            Available for software engineering, quality assurance automation,
-            and full-stack product collaboration. Select a direct channel below
-            or download the technical curriculum vitae.
+            {siteConfig.contactBody}
           </p>
         </div>
 
-        {socials.length === 0 ? (
+        {channels.length === 0 ? (
           <div className="border border-[var(--white-15)] p-8">
             <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-50)] m-0">
               NO COMMUNICATION CHANNELS CONFIGURED
@@ -52,12 +52,9 @@ export function Contact({ socials }: ContactProps) {
           </div>
         ) : (
           <div className="border-t border-[var(--white-15)]">
-            {socials.map((link) => {
+            {channels.map((link) => {
               const IconComponent = iconMap[link.icon] || MailIcon;
-              const isCV =
-                link.icon === "FileTextIcon" ||
-                link.icon === "DocumentIcon" ||
-                link.platform.toLowerCase().includes("cv");
+              const isCV = link.icon === "FileTextIcon";
               const openExternal = link.url.startsWith("http") || isCV;
 
               return (

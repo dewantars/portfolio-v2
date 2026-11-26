@@ -4,32 +4,33 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Arrow } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import type { Achievement } from "@prisma/client";
+import type { CertificationDTO } from "@/lib/types/portfolio";
 
 interface CertificationsLedgerProps {
-  achievements: Achievement[];
+  certifications: CertificationDTO[];
 }
 
 export function CertificationsLedger({
-  achievements,
+  certifications,
 }: CertificationsLedgerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [inspectedItem, setInspectedItem] = useState<Achievement | null>(null);
+  const [inspectedItem, setInspectedItem] =
+    useState<CertificationDTO | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const item of achievements) {
+    for (const item of certifications) {
       counts.set(item.category, (counts.get(item.category) ?? 0) + 1);
     }
     return Array.from(counts.entries());
-  }, [achievements]);
+  }, [certifications]);
 
   const filteredItems = useMemo(() => {
-    if (selectedCategory === "ALL") return achievements;
-    return achievements.filter((item) => item.category === selectedCategory);
-  }, [achievements, selectedCategory]);
+    if (selectedCategory === "ALL") return certifications;
+    return certifications.filter((item) => item.category === selectedCategory);
+  }, [certifications, selectedCategory]);
 
   useEffect(() => {
     if (!inspectedItem) return;
@@ -52,7 +53,7 @@ export function CertificationsLedger({
     };
   }, [inspectedItem]);
 
-  if (achievements.length === 0) {
+  if (certifications.length === 0) {
     return (
       <div className="border border-[var(--white-15)] p-10 text-center">
         <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)] m-0">
@@ -64,7 +65,6 @@ export function CertificationsLedger({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Category Filter Strip */}
       <div className="border border-[var(--white-15)] bg-[#000000]/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div
           className="flex flex-wrap gap-2"
@@ -82,7 +82,7 @@ export function CertificationsLedger({
                 : "border-[var(--white-25)] bg-[#000000] text-[var(--white-80)] hover:border-[var(--white-100)]"
             )}
           >
-            ALL ({achievements.length})
+            ALL ({certifications.length})
           </button>
           {categories.map(([category, count]) => {
             const active = selectedCategory === category;
@@ -110,7 +110,6 @@ export function CertificationsLedger({
         </span>
       </div>
 
-      {/* Credential Verification Ledger */}
       {filteredItems.length === 0 ? (
         <div className="border border-[var(--white-15)] p-10 flex flex-col items-start gap-4">
           <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)] m-0">
@@ -131,31 +130,40 @@ export function CertificationsLedger({
               key={item.id}
               className="grid grid-cols-1 lg:grid-cols-[240px_1fr_auto] gap-6 p-5 md:p-7 items-center hover:bg-[var(--white-10)] transition-colors duration-200"
             >
-              <div className="relative w-full aspect-[16/10] border border-[var(--white-15)] bg-[#000000] overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={480}
-                  height={300}
-                  unoptimized
-                  className="w-full h-full object-cover grayscale contrast-[1.08]"
-                />
+              <div className="relative w-full aspect-[16/10] border border-[var(--white-15)] bg-[#000000] overflow-hidden flex items-center justify-center">
+                {item.imageUrl ? (
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.title}
+                    width={480}
+                    height={300}
+                    unoptimized
+                    className="w-full h-full object-cover grayscale contrast-[1.08]"
+                  />
+                ) : (
+                  <span className="font-mono-tech text-[11px] tracking-[0.12em] uppercase text-[var(--white-50)]">
+                    NO IMAGE PLATE
+                  </span>
+                )}
               </div>
 
               <div className="min-w-0 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-60)]">
                   <span>CERT // {String(index + 1).padStart(2, "0")}</span>
-                  <span>{item.date}</span>
+                  <span>{item.issueDate}</span>
                   <span>{item.category}</span>
+                  {item.credentialId && <span>ID: {item.credentialId}</span>}
                 </div>
 
                 <h2 className="font-display m-0 text-2xl md:text-3xl font-bold tracking-[0.03em] uppercase text-[var(--white-100)]">
                   {item.title}
                 </h2>
 
-                <p className="m-0 text-sm md:text-base leading-[1.6] text-[var(--white-80)]">
-                  {item.description}
-                </p>
+                {item.description && (
+                  <p className="m-0 text-sm md:text-base leading-[1.6] text-[var(--white-80)]">
+                    {item.description}
+                  </p>
+                )}
 
                 <div className="pt-2 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono-tech text-xs tracking-[0.08em] text-[var(--white-60)]">
                   <span>ISSUER: {item.issuer.toUpperCase()}</span>
@@ -178,9 +186,9 @@ export function CertificationsLedger({
                   <Arrow />
                 </button>
 
-                {item.credentialUrl ? (
+                {item.verificationUrl ? (
                   <a
-                    href={item.credentialUrl}
+                    href={item.verificationUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 border border-[var(--white-25)] font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-80)] hover:text-[var(--white-100)] hover:border-[var(--white-100)] transition-colors duration-200"
@@ -199,7 +207,6 @@ export function CertificationsLedger({
         </div>
       )}
 
-      {/* Document Inspection Modal */}
       {inspectedItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-[var(--black-80)]"
@@ -216,7 +223,7 @@ export function CertificationsLedger({
           >
             <div className="flex items-center justify-between gap-4 pb-4 mb-6 border-b border-[var(--white-15)]">
               <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-80)]">
-                CREDENTIAL INSPECTION // {inspectedItem.date}
+                CREDENTIAL INSPECTION // {inspectedItem.issueDate}
               </span>
               <button
                 ref={closeButtonRef}
@@ -229,20 +236,29 @@ export function CertificationsLedger({
             </div>
 
             <div className="flex flex-col gap-6">
-              <div className="relative w-full aspect-video border border-[var(--white-15)] bg-[#000000] overflow-hidden">
-                <Image
-                  src={inspectedItem.image}
-                  alt={inspectedItem.title}
-                  width={1280}
-                  height={720}
-                  unoptimized
-                  className="w-full h-full object-cover grayscale contrast-[1.08]"
-                />
+              <div className="relative w-full aspect-video border border-[var(--white-15)] bg-[#000000] overflow-hidden flex items-center justify-center">
+                {inspectedItem.imageUrl ? (
+                  <Image
+                    src={inspectedItem.imageUrl}
+                    alt={inspectedItem.title}
+                    width={1280}
+                    height={720}
+                    unoptimized
+                    className="w-full h-full object-cover grayscale contrast-[1.08]"
+                  />
+                ) : (
+                  <span className="font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-50)]">
+                    NO DOCUMENT IMAGE MOUNTED
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col gap-4">
                 <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-60)]">
                   {inspectedItem.category}
+                  {inspectedItem.credentialId
+                    ? ` // ID: ${inspectedItem.credentialId}`
+                    : ""}
                 </span>
                 <h3
                   id="certification-modal-title"
@@ -250,9 +266,11 @@ export function CertificationsLedger({
                 >
                   {inspectedItem.title}
                 </h3>
-                <p className="m-0 text-sm md:text-base leading-[1.6] text-[var(--white-80)]">
-                  {inspectedItem.description}
-                </p>
+                {inspectedItem.description && (
+                  <p className="m-0 text-sm md:text-base leading-[1.6] text-[var(--white-80)]">
+                    {inspectedItem.description}
+                  </p>
+                )}
 
                 <div className="border-t border-b border-[var(--white-15)] py-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
@@ -265,10 +283,10 @@ export function CertificationsLedger({
                   </div>
                   <div>
                     <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-60)] mb-1">
-                      ISSUE YEAR
+                      ISSUE DATE
                     </div>
                     <div className="font-mono-tech text-xs text-[var(--white-100)]">
-                      {inspectedItem.date}
+                      {inspectedItem.issueDate}
                     </div>
                   </div>
                   {inspectedItem.tags.length > 0 && (
@@ -283,9 +301,9 @@ export function CertificationsLedger({
                   )}
                 </div>
 
-                {inspectedItem.credentialUrl ? (
+                {inspectedItem.verificationUrl ? (
                   <a
-                    href={inspectedItem.credentialUrl}
+                    href={inspectedItem.verificationUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="cta-aerospace gap-2.5 w-full sm:w-auto self-start"

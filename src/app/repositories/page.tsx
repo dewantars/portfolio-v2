@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
 import { SectionLabel, Arrow, GithubIcon } from "@/components/ui/icons";
 import { fetchGithubRepos } from "@/lib/data/github";
+import { getSiteConfig } from "@/lib/data/site-config";
 import { RepositoriesArchive } from "@/components/repositories/repositories-archive";
 
-export const metadata: Metadata = {
-  title: "Repositories | Dewanta Rahma Satria",
-  description:
-    "Live public GitHub repository archive and source code telemetry for dewantars.",
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  return {
+    title: `Repositories | ${siteConfig.fullName}`,
+    description: `Live public GitHub repository archive and source code telemetry for ${siteConfig.fullName}.`,
+  };
+}
 
 export default async function RepositoriesPage() {
-  const { repos, error, fetchedAt } = await fetchGithubRepos();
+  const { repos, error, fetchedAt, username } = await fetchGithubRepos();
 
   return (
     <main className="max-w-[1320px] mx-auto px-5 md:px-8 pt-28 md:pt-32 pb-20 md:pb-28">
@@ -21,7 +26,7 @@ export default async function RepositoriesPage() {
           PUBLIC REPOSITORIES
         </h1>
         <a
-          href="https://github.com/dewantars"
+          href={`https://github.com/${encodeURIComponent(username)}`}
           target="_blank"
           rel="noreferrer"
           className="cta-aerospace gap-3 shrink-0"
@@ -36,6 +41,7 @@ export default async function RepositoriesPage() {
         initialRepos={repos}
         initialError={error}
         initialFetchedAt={fetchedAt}
+        initialUsername={username}
       />
     </main>
   );

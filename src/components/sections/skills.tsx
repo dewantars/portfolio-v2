@@ -1,8 +1,8 @@
 import { SectionLabel } from "@/components/ui/icons";
-import { SkillGroup as SkillGroupType } from "@prisma/client";
+import type { SkillCategoryGroup } from "@/lib/types/portfolio";
 
 interface SkillsProps {
-  skillGroups: SkillGroupType[];
+  skillGroups: SkillCategoryGroup[];
 }
 
 export function Skills({ skillGroups }: SkillsProps) {
@@ -33,25 +33,30 @@ export function Skills({ skillGroups }: SkillsProps) {
         <div className="border-t border-[var(--white-15)]">
           {skillGroups.map((group, groupIndex) => (
             <div
-              key={group.id}
+              key={group.category}
               className="py-7 md:py-8 grid grid-cols-1 lg:grid-cols-[280px_1fr] items-start gap-5 lg:gap-8 border-b border-[var(--white-15)]"
             >
               <div className="flex items-baseline gap-4">
                 <span className="font-mono-tech text-xs tracking-[0.16em] text-[var(--white-50)]">
-                  0{groupIndex + 1}
+                  {String(groupIndex + 1).padStart(2, "0")}
                 </span>
                 <h3 className="font-display m-0 text-xl md:text-2xl font-bold tracking-[0.05em] uppercase text-[var(--white-100)]">
-                  {group.title}
+                  {group.category}
                 </h3>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 border-t border-l border-[var(--white-15)]">
-                {group.skills.map((skill) => (
+                {group.items.map((skill) => (
                   <div
-                    key={skill}
+                    key={skill.id}
                     className="px-4 py-3 border-r border-b border-[var(--white-15)] bg-[#000000]/65 hover:bg-[var(--white-10)] transition-colors duration-200 font-mono-tech text-xs tracking-[0.04em] text-[var(--white-80)]"
                   >
-                    {skill}
+                    <div>{skill.name}</div>
+                    {skill.specification && (
+                      <div className="text-[10px] text-[var(--white-50)] mt-0.5">
+                        {skill.specification}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

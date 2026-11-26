@@ -9,6 +9,7 @@ interface RepositoriesArchiveProps {
   initialRepos: GithubRepo[];
   initialError: string | null;
   initialFetchedAt: string;
+  initialUsername: string;
 }
 
 const ITEMS_PER_PAGE = 8;
@@ -50,10 +51,12 @@ export function RepositoriesArchive({
   initialRepos,
   initialError,
   initialFetchedAt,
+  initialUsername,
 }: RepositoriesArchiveProps) {
   const [repos, setRepos] = useState<GithubRepo[]>(initialRepos);
   const [error, setError] = useState<string | null>(initialError);
   const [fetchedAt, setFetchedAt] = useState<string>(initialFetchedAt);
+  const [username, setUsername] = useState<string>(initialUsername);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const [query, setQuery] = useState("");
@@ -120,6 +123,9 @@ export function RepositoriesArchive({
       if (typeof payload.fetchedAt === "string") {
         setFetchedAt(payload.fetchedAt);
       }
+      if (typeof payload.username === "string") {
+        setUsername(payload.username);
+      }
       setCurrentPage(1);
     } catch {
       setError("CLIENT TELEMETRY REQUEST FAILED");
@@ -136,12 +142,11 @@ export function RepositoriesArchive({
 
   return (
     <div ref={archiveTopRef} className="scroll-mt-28 flex flex-col gap-8">
-      {/* Telemetry Status & Filter Bar */}
       <div className="border border-[var(--white-15)] bg-[#000000]/80">
         <div className="px-5 py-3.5 border-b border-[var(--white-15)] bg-[var(--gray-60)] flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-1 font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-80)]">
             <span>SOURCE // GITHUB REST API</span>
-            <span>USER // DEWANTARS</span>
+            <span>USER // {username.toUpperCase()}</span>
             <span>SYNCED // {formatIsoDate(fetchedAt)}</span>
           </div>
           <button
@@ -239,7 +244,6 @@ export function RepositoriesArchive({
         </div>
       </div>
 
-      {/* Loading / Error / Empty / Precision Table States */}
       {isSyncing && repos.length === 0 ? (
         <div
           className="border border-[var(--white-15)] p-10 text-center"
@@ -274,7 +278,7 @@ export function RepositoriesArchive({
               {isSyncing ? "RETRYING..." : "RETRY CONNECTION"}
             </button>
             <a
-              href="https://github.com/dewantars?tab=repositories"
+              href={`https://github.com/${encodeURIComponent(username)}?tab=repositories`}
               target="_blank"
               rel="noreferrer"
               className="cta-aerospace-secondary gap-2"
@@ -306,7 +310,6 @@ export function RepositoriesArchive({
       ) : (
         <>
           <div className="border border-[var(--white-15)] bg-[#000000]/80">
-            {/* Desktop table header */}
             <div className="hidden lg:grid lg:grid-cols-[72px_1.6fr_150px_130px_120px_160px] gap-6 px-6 py-3.5 border-b border-[var(--white-15)] bg-[var(--gray-60)] font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-80)]">
               <span>IDX</span>
               <span>REPOSITORY &amp; DESCRIPTION</span>
@@ -334,9 +337,16 @@ export function RepositoriesArchive({
                     </div>
 
                     <div className="min-w-0">
-                      <h2 className="font-display m-0 mb-1.5 text-xl md:text-2xl font-bold tracking-[0.03em] uppercase text-[var(--white-100)] break-words">
-                        {repo.name}
-                      </h2>
+                      <div className="flex flex-wrap items-center gap-2.5 mb-1.5">
+                        <h2 className="font-display m-0 text-xl md:text-2xl font-bold tracking-[0.03em] uppercase text-[var(--white-100)] break-words">
+                          {repo.name}
+                        </h2>
+                        {repo.isPinned && (
+                          <span className="px-2 py-0.5 border border-[var(--white-100)] font-mono-tech text-[10px] tracking-[0.12em] uppercase text-[var(--white-100)]">
+                            PINNED
+                          </span>
+                        )}
+                      </div>
                       <p className="m-0 text-sm leading-[1.55] text-[var(--white-80)] break-words">
                         {repo.description ||
                           "No repository summary logged on GitHub."}
@@ -376,7 +386,6 @@ export function RepositoriesArchive({
             </div>
           </div>
 
-          {/* Pagination Telemetry Bar */}
           {totalPages > 1 && (
             <nav
               aria-label="Repositories pagination"

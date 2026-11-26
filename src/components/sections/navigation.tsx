@@ -1,20 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { label: "HOME", href: "/" },
-  { label: "CV", href: "/cv" },
-  { label: "REPOSITORIES", href: "/repositories" },
-  { label: "CERTIFICATIONS", href: "/certifications" },
-  { label: "GALLERY", href: "/gallery" },
-];
+import type { SiteConfigDTO } from "@/lib/types/portfolio";
 
 interface NavigationProps {
-  name?: string;
+  siteConfig: SiteConfigDTO;
 }
 
 function isRouteActive(pathname: string, href: string): boolean {
@@ -22,12 +15,34 @@ function isRouteActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Navigation({ name }: NavigationProps) {
+export function Navigation({ siteConfig }: NavigationProps) {
   const pathname = usePathname() ?? "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const brandName = (name ?? "Dewanta Rahma Satria").toUpperCase();
+  const navItems = useMemo(() => {
+    const vis = siteConfig.navVisibility;
+    const all = [
+      { key: "home" as const, label: "HOME", href: "/" },
+      { key: "cv" as const, label: "CV", href: "/cv" },
+      {
+        key: "repositories" as const,
+        label: "REPOSITORIES",
+        href: "/repositories",
+      },
+      {
+        key: "certifications" as const,
+        label: "CERTIFICATIONS",
+        href: "/certifications",
+      },
+      { key: "gallery" as const, label: "GALLERY", href: "/gallery" },
+    ];
+    return all.filter((item) => vis[item.key]);
+  }, [siteConfig.navVisibility]);
+
+  const brandName = (siteConfig.navBrandLabel || siteConfig.fullName).toUpperCase();
+  const ctaLabel = siteConfig.navCtaLabel || "CONNECT";
+  const ctaHref = siteConfig.navCtaHref || "/#contact";
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -68,7 +83,7 @@ export function Navigation({ name }: NavigationProps) {
         <Link
           className="inline-flex items-center min-h-[44px] font-display font-bold text-[15px] md:text-base tracking-[0.16em] uppercase text-[var(--white-100)] whitespace-nowrap"
           href="/"
-          aria-label="Dewanta Rahma Satria, navigate to home"
+          aria-label={`${siteConfig.fullName}, navigate to home`}
         >
           {brandName}
         </Link>
@@ -97,9 +112,9 @@ export function Navigation({ name }: NavigationProps) {
         <div className="hidden lg:flex items-center">
           <Link
             className="inline-flex items-center justify-center min-h-[44px] px-5 border border-[var(--white-25)] text-[var(--white-100)] font-display text-[12px] font-bold tracking-[0.14em] uppercase hover:bg-[var(--white-100)] hover:text-[#000000] hover:border-[var(--white-100)] transition-colors duration-200"
-            href="/#contact"
+            href={ctaHref}
           >
-            CONNECT
+            {ctaLabel}
           </Link>
         </div>
 
@@ -166,10 +181,10 @@ export function Navigation({ name }: NavigationProps) {
         <div className="pt-6 border-t border-[var(--white-15)]">
           <Link
             className="cta-aerospace w-full"
-            href="/#contact"
+            href={ctaHref}
             onClick={() => setMenuOpen(false)}
           >
-            INITIATE CONTACT
+            {ctaLabel}
           </Link>
         </div>
       </div>

@@ -4,34 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Arrow } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import type {
-  GalleryAspectRatio,
-  GalleryFeaturedSource,
-  GalleryFrame,
-} from "@/lib/data/gallery";
+import type { GalleryItemDTO } from "@/lib/types/portfolio";
 
 interface GalleryArchiveProps {
-  featured: GalleryFeaturedSource;
-  frames: GalleryFrame[];
+  featured: GalleryItemDTO | null;
+  frames: GalleryItemDTO[];
 }
 
-type LightboxItem = {
-  id: string;
-  code: string;
-  title: string;
-  category: string;
-  location: string;
-  date: string;
-  mediaType: "video" | "image";
-  src: string | null;
-  poster?: string | null;
-  alt: string;
-  ratio: GalleryAspectRatio;
-  targetPath?: string;
-  note: string;
-};
-
-function getTileClasses(ratio: GalleryFrame["ratio"]): string {
+function getTileClasses(ratio: string): string {
   switch (ratio) {
     case "2:1":
       return "sm:col-span-2 lg:col-span-2 lg:row-span-1 aspect-[2/1] lg:aspect-auto lg:h-full";
@@ -43,7 +23,7 @@ function getTileClasses(ratio: GalleryFrame["ratio"]): string {
   }
 }
 
-function getTileDimensions(ratio: GalleryFrame["ratio"]): {
+function getTileDimensions(ratio: string): {
   width: number;
   height: number;
 } {
@@ -77,39 +57,8 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
     return frames.filter((f) => f.category === selectedCategory);
   }, [frames, selectedCategory]);
 
-  const lightboxItems = useMemo<LightboxItem[]>(() => {
-    const featuredItem: LightboxItem = {
-      id: featured.id,
-      code: featured.code,
-      title: featured.title,
-      category: featured.category,
-      location: featured.location,
-      date: featured.date,
-      mediaType: featured.mediaType,
-      src: featured.src,
-      poster: featured.poster,
-      alt: featured.alt,
-      ratio: featured.ratio,
-      targetPath: featured.targetPath,
-      note: featured.note,
-    };
-
-    const gridItems: LightboxItem[] = visibleFrames.map((frame) => ({
-      id: frame.id,
-      code: frame.code,
-      title: frame.title,
-      category: frame.category,
-      location: frame.location,
-      date: frame.date,
-      mediaType: "image",
-      src: frame.src,
-      alt: frame.alt,
-      ratio: frame.ratio,
-      targetPath: frame.targetPath,
-      note: frame.note,
-    }));
-
-    return [featuredItem, ...gridItems];
+  const lightboxItems = useMemo<GalleryItemDTO[]>(() => {
+    return featured ? [featured, ...visibleFrames] : visibleFrames;
   }, [featured, visibleFrames]);
 
   const activeItem =
@@ -148,110 +97,125 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
     };
   }, [activeIndex, lightboxItems.length]);
 
+  if (!featured && frames.length === 0) {
+    return (
+      <div className="border border-[var(--white-15)] p-10 text-center">
+        <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)] m-0">
+          NO GALLERY MEDIA RECORDS AVAILABLE
+        </p>
+      </div>
+    );
+  }
+
   const mountedCount =
-    (featured.src ? 1 : 0) + frames.filter((f) => Boolean(f.src)).length;
-  const totalCount = 1 + frames.length;
+    (featured?.imageUrl ? 1 : 0) +
+    frames.filter((f) => Boolean(f.imageUrl)).length;
+  const totalCount = (featured ? 1 : 0) + frames.length;
+  const frameOffset = featured ? 1 : 0;
 
   return (
     <div className="flex flex-col gap-8">
-      {/* 01 // Primary 19:6 Source (Video / Photo) */}
-      <section aria-label="Primary 19:6 featured media">
-        <div className="border border-[var(--white-15)] bg-[#000000]">
-          <div className="relative w-full aspect-[16/9] sm:aspect-[19/6] bg-[#000000] border-b border-[var(--white-15)] overflow-hidden">
-            {featured.src && featured.mediaType === "video" ? (
-              <video
-                src={featured.src}
-                poster={featured.poster ?? undefined}
-                controls
-                playsInline
-                preload="metadata"
-                width={1900}
-                height={600}
-                className="w-full h-full object-cover grayscale contrast-[1.06]"
-              />
-            ) : featured.src ? (
-              <button
-                type="button"
-                onClick={(e) => {
-                  lastTriggerRef.current = e.currentTarget;
-                  setActiveIndex(0);
-                }}
-                aria-label={`Inspect ${featured.title} in lightbox`}
-                className="group relative w-full h-full block bg-[#000000]"
-              >
-                <Image
-                  src={featured.src}
-                  alt={featured.alt}
+      {/* 01 // Primary 19:6 Source */}
+      {featured && (
+        <section aria-label="Primary 19:6 featured media">
+          <div className="border border-[var(--white-15)] bg-[#000000]">
+            <div className="relative w-full aspect-[16/9] sm:aspect-[19/6] bg-[#000000] border-b border-[var(--white-15)] overflow-hidden">
+              {featured.imageUrl && featured.mediaType === "video" ? (
+                <video
+                  src={featured.imageUrl}
+                  poster={featured.posterUrl ?? undefined}
+                  controls
+                  playsInline
+                  preload="metadata"
                   width={1900}
                   height={600}
-                  priority
-                  fetchPriority="high"
-                  unoptimized
-                  className="w-full h-full object-cover grayscale contrast-[1.08] group-hover:scale-[1.01] transition-transform duration-300"
+                  className="w-full h-full object-cover grayscale contrast-[1.06]"
                 />
-              </button>
-            ) : (
+              ) : featured.imageUrl ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    lastTriggerRef.current = e.currentTarget;
+                    setActiveIndex(0);
+                  }}
+                  aria-label={`Inspect ${featured.title} in lightbox`}
+                  className="group relative w-full h-full block bg-[#000000]"
+                >
+                  <Image
+                    src={featured.imageUrl}
+                    alt={featured.altText || featured.title}
+                    width={1900}
+                    height={600}
+                    priority
+                    fetchPriority="high"
+                    unoptimized
+                    className="w-full h-full object-cover grayscale contrast-[1.08] group-hover:scale-[1.01] transition-transform duration-300"
+                  />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    lastTriggerRef.current = e.currentTarget;
+                    setActiveIndex(0);
+                  }}
+                  className="w-full h-full p-6 md:p-10 flex flex-col justify-between text-left bg-[#000000]/80 hover:bg-[var(--white-10)] transition-colors duration-200"
+                >
+                  <div className="w-full flex flex-wrap items-center justify-between gap-4 font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-60)]">
+                    <span>
+                      {featured.code} {"//"} VIDEO OR WIDESCREEN PHOTO
+                    </span>
+                    <span>RATIO {featured.aspectRatio}</span>
+                  </div>
+
+                  <div className="my-auto py-4">
+                    <p className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)] m-0 mb-2">
+                      PRIMARY 19:6 MEDIA SLOT
+                    </p>
+                    <p className="font-mono-tech text-xs text-[var(--white-60)] m-0">
+                      UPLOAD IMAGE OR FEATURED ASSET VIA ADMIN GALLERY ARCHIVE
+                    </p>
+                  </div>
+
+                  <div className="w-full flex items-center justify-between gap-4 font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-80)]">
+                    <span>STATUS: AWAITING MEDIA MOUNT</span>
+                    <span className="inline-flex items-center gap-1.5 text-[var(--white-100)]">
+                      <span>INSPECT SLOT</span>
+                      <Arrow />
+                    </span>
+                  </div>
+                </button>
+              )}
+            </div>
+
+            <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#000000]">
+              <div className="min-w-0">
+                <div className="font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-60)] mb-1">
+                  {featured.code} {"//"} {featured.location} {"//"}{" "}
+                  {featured.capturedDate}
+                </div>
+                <h2 className="font-display m-0 text-xl md:text-2xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)]">
+                  {featured.title}
+                </h2>
+              </div>
+
               <button
                 type="button"
                 onClick={(e) => {
                   lastTriggerRef.current = e.currentTarget;
                   setActiveIndex(0);
                 }}
-                className="w-full h-full p-6 md:p-10 flex flex-col justify-between text-left bg-[#000000]/80 hover:bg-[var(--white-10)] transition-colors duration-200"
+                className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 border border-[var(--white-25)] font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-100)] hover:bg-[var(--white-100)] hover:text-[#000000] hover:border-[var(--white-100)] transition-colors duration-200 shrink-0"
               >
-                <div className="w-full flex flex-wrap items-center justify-between gap-4 font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-60)]">
-                  <span>{featured.code} {"//"} VIDEO OR WIDESCREEN PHOTO</span>
-                  <span>RATIO 19:6</span>
-                </div>
-
-                <div className="my-auto py-4">
-                  <p className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)] m-0 mb-2">
-                    PRIMARY 19:6 MEDIA SLOT
-                  </p>
-                  {featured.targetPath && (
-                    <p className="font-mono-tech text-xs text-[var(--white-60)] m-0 break-all">
-                      MOUNT TARGET: {featured.targetPath} (OR WIDESCREEN IMAGE)
-                    </p>
-                  )}
-                </div>
-
-                <div className="w-full flex items-center justify-between gap-4 font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-80)]">
-                  <span>STATUS: AWAITING LOCAL MEDIA</span>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--white-100)]">
-                    <span>INSPECT SLOT</span>
-                    <Arrow />
-                  </span>
-                </div>
+                <span>VIEW LIGHTBOX</span>
+                <Arrow />
               </button>
-            )}
-          </div>
-
-          <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#000000]">
-            <div className="min-w-0">
-              <div className="font-mono-tech text-[11px] tracking-[0.16em] uppercase text-[var(--white-60)] mb-1">
-                {featured.code} {"//"} {featured.location} {"//"} {featured.date}
-              </div>
-              <h2 className="font-display m-0 text-xl md:text-2xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)]">
-                {featured.title}
-              </h2>
             </div>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                lastTriggerRef.current = e.currentTarget;
-                setActiveIndex(0);
-              }}
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 border border-[var(--white-25)] font-mono-tech text-xs tracking-[0.14em] uppercase text-[var(--white-100)] hover:bg-[var(--white-100)] hover:text-[#000000] hover:border-[var(--white-100)] transition-colors duration-200 shrink-0"
-            >
-              <span>VIEW LIGHTBOX</span>
-              <Arrow />
-            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Filter & Status Bar for Mosaic Grid */}
+      {/* Filter & Status Bar */}
       <div className="border border-[var(--white-15)] bg-[#000000]/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div
           className="flex flex-wrap gap-2"
@@ -303,7 +267,6 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
         </span>
       </div>
 
-      {/* 02 // Multi-Ratio Dense Mosaic Grid (2:1, 1:1, 1:2) */}
       {visibleFrames.length === 0 ? (
         <div className="border border-[var(--white-15)] p-10 flex flex-col items-start gap-4">
           <p className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)] m-0">
@@ -320,24 +283,24 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:auto-rows-[260px] lg:auto-rows-[296px] grid-flow-dense gap-4">
           {visibleFrames.map((frame, index) => {
-            const dims = getTileDimensions(frame.ratio);
+            const dims = getTileDimensions(frame.aspectRatio);
             return (
               <button
                 key={frame.id}
                 type="button"
                 onClick={(e) => {
                   lastTriggerRef.current = e.currentTarget;
-                  setActiveIndex(index + 1);
+                  setActiveIndex(index + frameOffset);
                 }}
                 className={cn(
                   "group relative text-left border border-[var(--white-15)] hover:border-[var(--white-100)] bg-[#000000] transition-colors duration-200 overflow-hidden flex flex-col justify-between",
-                  getTileClasses(frame.ratio)
+                  getTileClasses(frame.aspectRatio)
                 )}
               >
-                {frame.src ? (
+                {frame.imageUrl ? (
                   <Image
-                    src={frame.src}
-                    alt={frame.alt}
+                    src={frame.imageUrl}
+                    alt={frame.altText || frame.title}
                     width={dims.width}
                     height={dims.height}
                     unoptimized
@@ -347,36 +310,32 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
                   <div className="flex-1 w-full p-5 flex flex-col justify-between bg-[#000000]">
                     <div className="flex items-center justify-between gap-2 font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-60)]">
                       <span>ARCHIVE SLOT</span>
-                      <span>RATIO {frame.ratio}</span>
+                      <span>RATIO {frame.aspectRatio}</span>
                     </div>
 
                     <div className="my-auto py-3">
                       <p className="font-display text-xl md:text-2xl font-bold tracking-[0.04em] uppercase text-[var(--white-80)] m-0 mb-1.5">
                         AWAITING MEDIA
                       </p>
-                      {frame.targetPath && (
-                        <p className="font-mono-tech text-[11px] text-[var(--white-60)] m-0 break-all">
-                          {frame.targetPath}
-                        </p>
-                      )}
+                      <p className="font-mono-tech text-[11px] text-[var(--white-60)] m-0">
+                        {frame.category} {"//"} {frame.location}
+                      </p>
                     </div>
                   </div>
                 )}
 
-                {/* Top-right ratio telemetry badge on mounted images */}
-                {frame.src && (
+                {frame.imageUrl && (
                   <div className="relative z-10 p-3 flex justify-end">
                     <span className="px-2.5 py-1 bg-[#000000]/90 border border-[var(--white-25)] font-mono-tech text-[10px] tracking-[0.14em] uppercase text-[var(--white-100)]">
-                      {frame.ratio}
+                      {frame.aspectRatio}
                     </span>
                   </div>
                 )}
 
-                {/* Bottom high-contrast caption strip */}
                 <div className="relative z-10 w-full px-4 py-3 bg-[#000000]/90 border-t border-[var(--white-15)] flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-60)]">
-                      {frame.code} {"//"} {frame.ratio}
+                      {frame.code} {"//"} {frame.aspectRatio}
                     </div>
                     <h3 className="font-display m-0 text-base md:text-lg font-bold tracking-[0.04em] uppercase text-[var(--white-100)] truncate">
                       {frame.title}
@@ -393,7 +352,6 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
         </div>
       )}
 
-      {/* Lightbox Modal */}
       {activeItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-[var(--black-80)]"
@@ -410,7 +368,7 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
           >
             <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-[var(--white-15)]">
               <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-80)]">
-                {activeItem.code} {"//"} RATIO {activeItem.ratio} {"//"}{" "}
+                {activeItem.code} {"//"} RATIO {activeItem.aspectRatio} {"//"}{" "}
                 {activeItem.category}
               </span>
 
@@ -424,7 +382,7 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
                           prev === null
                             ? 0
                             : (prev - 1 + lightboxItems.length) %
-                            lightboxItems.length
+                              lightboxItems.length
                         )
                       }
                       aria-label="Previous gallery frame"
@@ -458,20 +416,20 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
             </div>
 
             <div className="relative w-full aspect-video border border-[var(--white-15)] bg-[#000000] overflow-hidden mb-6">
-              {activeItem.src && activeItem.mediaType === "video" ? (
+              {activeItem.imageUrl && activeItem.mediaType === "video" ? (
                 <video
-                  src={activeItem.src}
-                  poster={activeItem.poster ?? undefined}
+                  src={activeItem.imageUrl}
+                  poster={activeItem.posterUrl ?? undefined}
                   controls
                   playsInline
                   width={1280}
                   height={720}
                   className="w-full h-full object-contain bg-[#000000]"
                 />
-              ) : activeItem.src ? (
+              ) : activeItem.imageUrl ? (
                 <Image
-                  src={activeItem.src}
-                  alt={activeItem.alt}
+                  src={activeItem.imageUrl}
+                  alt={activeItem.altText || activeItem.title}
                   width={1440}
                   height={900}
                   unoptimized
@@ -480,16 +438,14 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
               ) : (
                 <div className="w-full h-full p-8 flex flex-col justify-center items-start gap-3">
                   <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)]">
-                    ARCHIVE STATUS // UNMOUNTED LOCAL SLOT ({activeItem.ratio})
+                    ARCHIVE STATUS // UNMOUNTED SLOT ({activeItem.aspectRatio})
                   </span>
                   <p className="font-display text-3xl md:text-4xl font-bold uppercase text-[var(--white-100)] m-0">
                     NO MEDIA FILE MOUNTED YET
                   </p>
-                  {activeItem.targetPath && (
-                    <p className="font-mono-tech text-xs text-[var(--white-80)] m-0">
-                      PLACE LOCAL ASSET AT: {activeItem.targetPath}
-                    </p>
-                  )}
+                  <p className="font-mono-tech text-xs text-[var(--white-80)] m-0">
+                    UPLOAD IMAGE VIA /ADMIN/GALLERY TO MOUNT THIS SLOT
+                  </p>
                 </div>
               )}
             </div>
@@ -503,11 +459,11 @@ export function GalleryArchive({ featured, frames }: GalleryArchiveProps) {
                   {activeItem.title}
                 </h2>
                 <span className="font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-60)]">
-                  {activeItem.location} {"//"} {activeItem.date}
+                  {activeItem.location} {"//"} {activeItem.capturedDate}
                 </span>
               </div>
               <p className="m-0 text-sm md:text-base leading-[1.6] text-[var(--white-80)]">
-                {activeItem.note}
+                {activeItem.caption}
               </p>
             </div>
           </div>

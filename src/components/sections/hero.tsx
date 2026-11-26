@@ -1,20 +1,13 @@
 import Image from "next/image";
 import { Arrow } from "@/components/ui/icons";
-import { Profile } from "@prisma/client";
+import type { SiteConfigDTO } from "@/lib/types/portfolio";
 
 interface HeroProps {
-  profile: Profile | null;
+  siteConfig: SiteConfigDTO;
 }
 
-export function Hero({ profile }: HeroProps) {
-  const name = profile?.name ?? "Dewanta Rahma Satria";
-  const headline =
-    profile?.headline ??
-    "Software Engineer | QA Engineer | Intern at Telkom Indonesia | Student Telkom University";
-  const summary =
-    profile?.summary ??
-    "I am interested in software development, particularly in creating applications as a web and mobile developer, which I have been pursuing for the past few years.";
-  const photoUrl = profile?.photoUrl ?? "/assets/profile.jpg";
+export function Hero({ siteConfig }: HeroProps) {
+  const heroBgSrc = siteConfig.heroBackgroundUrl?.trim() || siteConfig.photoUrl;
 
   return (
     <section
@@ -24,8 +17,8 @@ export function Hero({ profile }: HeroProps) {
       {/* Full-bleed atmospheric portrait backdrop blending into deep-space canvas */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <Image
-          src={photoUrl}
-          alt={`Portrait of ${name}`}
+          src={heroBgSrc}
+          alt={`Hero background for ${siteConfig.fullName}`}
           fill
           priority
           fetchPriority="high"
@@ -43,7 +36,7 @@ export function Hero({ profile }: HeroProps) {
         <div className="hidden lg:block absolute inset-y-0 right-12 w-px bg-[var(--white-15)]" />
         <div className="hidden lg:flex absolute top-28 right-12 items-center gap-3 pr-4">
           <span className="font-mono-tech text-[10px] tracking-[0.18em] uppercase text-[var(--white-50)]">
-            FLIGHT DECK // 01
+            {siteConfig.heroFlightDeckLabel}
           </span>
           <span className="w-6 h-px bg-[var(--white-25)]" />
         </div>
@@ -53,28 +46,28 @@ export function Hero({ profile }: HeroProps) {
       <div className="relative z-10 max-w-[1320px] w-full mx-auto px-5 md:px-8 pt-32 pb-12 md:pb-16 lg:pb-20">
         <div className="max-w-[780px] flex flex-col items-start">
           <p className="font-mono-tech text-[11px] md:text-xs font-medium tracking-[0.18em] uppercase text-[var(--white-60)] mb-4">
-            SOFTWARE ENGINEER // FULL-STACK &amp; QA AUTOMATION
+            {siteConfig.roleEyebrow}
           </p>
 
           <h1 className="font-display m-0 mb-5 text-[clamp(44px,8vw,96px)] font-bold leading-[0.94] tracking-[0.04em] uppercase text-[var(--white-100)]">
-            {name}
+            {siteConfig.heroHeadline}
           </h1>
 
           <p className="m-0 mb-4 max-w-[600px] text-base md:text-[17px] leading-[1.6] text-[var(--white-80)]">
-            {summary}
+            {siteConfig.heroSubheadline}
           </p>
 
           <p className="font-mono-tech m-0 mb-9 text-xs md:text-[13px] tracking-[0.06em] uppercase text-[var(--white-50)]">
-            {headline}
+            {siteConfig.headline}
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <a href="#projects" className="cta-aerospace gap-3">
-              <span>VIEW MISSIONS</span>
+              <span>{siteConfig.heroPrimaryCtaLabel}</span>
               <Arrow />
             </a>
             <a href="#contact" className="cta-aerospace-secondary">
-              INITIATE CONTACT
+              {siteConfig.heroSecondaryCtaLabel}
             </a>
           </div>
         </div>

@@ -2,47 +2,47 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Arrow, SectionLabel } from "@/components/ui/icons";
-import { Project as ProjectType } from "@prisma/client";
+import type { ProjectDTO } from "@/lib/types/portfolio";
 
 interface ProjectsProps {
-  projects: ProjectType[];
+  projects: ProjectDTO[];
 }
 
-function getAccessStatus(project: ProjectType): string {
-  if (project.liveUrl && project.github) return "PUBLIC // LIVE + SOURCE";
+function getAccessStatus(project: ProjectDTO): string {
+  if (project.statusLabel.trim()) return project.statusLabel;
+  if (project.liveUrl && project.githubUrl) return "PUBLIC // LIVE + SOURCE";
   if (project.liveUrl) return "PUBLIC // LIVE DEPLOYMENT";
-  if (project.github) return "PUBLIC // OPEN SOURCE";
+  if (project.githubUrl) return "PUBLIC // OPEN SOURCE";
   return "INTERNAL // CONFIDENTIAL";
 }
 
-function MissionTelemetryFrame({ project }: { project: ProjectType }) {
+function MissionTelemetryFrame({ project }: { project: ProjectDTO }) {
   const accessStatus = getAccessStatus(project);
 
   return (
     <div className="relative flex flex-col justify-between bg-[#000000]/55 border-b lg:border-b-0 lg:border-r border-[var(--white-15)] min-h-[280px] lg:min-h-[340px]">
-      {/* Top telemetry bar */}
       <div className="flex items-center justify-between gap-4 px-5 py-3.5 border-b border-[var(--white-15)] bg-[var(--gray-60)]">
         <span className="font-mono-tech text-[11px] font-medium tracking-[0.16em] uppercase text-[var(--white-80)]">
-          MISSION // {project.number}
+          MISSION // {project.missionCode}
         </span>
         <span className="font-mono-tech text-[11px] tracking-[0.12em] uppercase text-[var(--white-50)]">
           {accessStatus}
         </span>
       </div>
 
-      {/* Central structural blueprint readout */}
       <div className="relative flex-1 p-6 md:p-8 flex flex-col justify-between gap-8">
         <div className="flex items-start justify-between gap-4">
           <div className="font-display text-[clamp(56px,6vw,88px)] font-bold leading-none tracking-[0.04em] text-[var(--white-100)]">
-            {project.number}
+            {project.missionCode}
           </div>
           <div className="text-right font-mono-tech text-[11px] leading-[1.6] tracking-[0.12em] uppercase text-[var(--white-50)]">
-            <div>CLASS // {project.type}</div>
-            <div>MODULES // {String(project.stack.length).padStart(2, "0")}</div>
+            <div>CLASS // {project.layoutType}</div>
+            <div>
+              MODULES // {String(project.techStack.length).padStart(2, "0")}
+            </div>
           </div>
         </div>
 
-        {/* Hairline telemetry specification rows */}
         <div className="border-t border-[var(--white-15)] pt-4 grid grid-cols-2 gap-4">
           <div>
             <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
@@ -57,7 +57,7 @@ function MissionTelemetryFrame({ project }: { project: ProjectType }) {
               PRIMARY SYSTEMS
             </div>
             <div className="font-mono-tech text-xs text-[var(--white-80)] break-words">
-              {project.stack.slice(0, 3).join(" / ")}
+              {project.techStack.slice(0, 3).join(" / ") || "CORE STACK"}
             </div>
           </div>
         </div>
@@ -67,7 +67,9 @@ function MissionTelemetryFrame({ project }: { project: ProjectType }) {
 }
 
 export function Projects({ projects }: ProjectsProps) {
-  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectDTO | null>(
+    null
+  );
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -129,7 +131,7 @@ export function Projects({ projects }: ProjectsProps) {
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-50)]">
-                      INDEX {project.number}
+                      INDEX {project.missionCode}
                     </span>
                     <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-60)]">
                       {project.role}
@@ -137,11 +139,11 @@ export function Projects({ projects }: ProjectsProps) {
                   </div>
 
                   <h3 className="font-display m-0 mb-4 text-3xl md:text-4xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)]">
-                    {project.name}
+                    {project.title}
                   </h3>
 
                   <p className="m-0 text-base leading-[1.6] text-[var(--white-80)]">
-                    {project.description}
+                    {project.summary}
                   </p>
                 </div>
 
@@ -151,7 +153,7 @@ export function Projects({ projects }: ProjectsProps) {
                       TECH STACK TELEMETRY
                     </span>
                     <p className="font-mono-tech m-0 text-xs md:text-[13px] leading-[1.6] text-[var(--white-60)] break-words">
-                      {project.stack.join("  /  ")}
+                      {project.techStack.join("  /  ")}
                     </p>
                   </div>
 
@@ -180,9 +182,9 @@ export function Projects({ projects }: ProjectsProps) {
                           <Arrow diagonal />
                         </a>
                       )}
-                      {project.github && (
+                      {project.githubUrl && (
                         <a
-                          href={project.github}
+                          href={project.githubUrl}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-1.5 min-h-[44px] font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-80)] hover:text-[var(--white-100)] transition-colors duration-200"
@@ -191,9 +193,9 @@ export function Projects({ projects }: ProjectsProps) {
                           <Arrow diagonal />
                         </a>
                       )}
-                      {!project.liveUrl && !project.github && (
+                      {!project.liveUrl && !project.githubUrl && (
                         <span className="font-mono-tech text-[11px] tracking-[0.14em] uppercase text-[var(--white-50)]">
-                          CONFIDENTIAL // INTERNAL SYSTEM
+                          {getAccessStatus(project)}
                         </span>
                       )}
                     </div>
@@ -205,7 +207,6 @@ export function Projects({ projects }: ProjectsProps) {
         </div>
       )}
 
-      {/* Mission Dossier Modal */}
       {selectedProject && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-[var(--black-80)]"
@@ -222,7 +223,7 @@ export function Projects({ projects }: ProjectsProps) {
           >
             <div className="flex items-center justify-between gap-4 pb-5 mb-6 border-b border-[var(--white-15)]">
               <span className="font-mono-tech text-xs tracking-[0.16em] uppercase text-[var(--white-60)]">
-                MISSION DOSSIER // {selectedProject.number}
+                MISSION DOSSIER // {selectedProject.missionCode}
               </span>
               <button
                 ref={closeButtonRef}
@@ -242,11 +243,21 @@ export function Projects({ projects }: ProjectsProps) {
                 id="mission-dossier-title"
                 className="font-display text-3xl md:text-5xl font-bold tracking-[0.04em] uppercase text-[var(--white-100)] m-0 mb-5"
               >
-                {selectedProject.name}
+                {selectedProject.title}
               </h3>
-              <p className="text-base leading-[1.6] text-[var(--white-80)] m-0">
-                {selectedProject.description}
+              <p className="text-base leading-[1.6] text-[var(--white-80)] m-0 mb-4">
+                {selectedProject.summary}
               </p>
+              {selectedProject.architectureDetail && (
+                <div className="border-l-2 border-[var(--white-25)] pl-4 py-1">
+                  <div className="font-mono-tech text-[10px] tracking-[0.16em] uppercase text-[var(--white-50)] mb-1">
+                    ARCHITECTURE &amp; VERIFICATION DETAIL
+                  </div>
+                  <p className="text-sm leading-[1.6] text-[var(--white-60)] m-0">
+                    {selectedProject.architectureDetail}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-5 border-t border-b border-[var(--white-15)] mb-6">
@@ -263,7 +274,7 @@ export function Projects({ projects }: ProjectsProps) {
                   SYSTEM STACK
                 </div>
                 <div className="font-mono-tech text-xs text-[var(--white-80)] break-words">
-                  {selectedProject.stack.join(" / ")}
+                  {selectedProject.techStack.join(" / ")}
                 </div>
               </div>
             </div>
@@ -280,9 +291,9 @@ export function Projects({ projects }: ProjectsProps) {
                   <Arrow diagonal />
                 </a>
               )}
-              {selectedProject.github && (
+              {selectedProject.githubUrl && (
                 <a
-                  href={selectedProject.github}
+                  href={selectedProject.githubUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="cta-aerospace-secondary gap-2.5"
@@ -291,7 +302,7 @@ export function Projects({ projects }: ProjectsProps) {
                   <Arrow diagonal />
                 </a>
               )}
-              {!selectedProject.liveUrl && !selectedProject.github && (
+              {!selectedProject.liveUrl && !selectedProject.githubUrl && (
                 <p className="font-mono-tech text-xs tracking-[0.12em] uppercase text-[var(--white-60)] m-0">
                   EXTERNAL REPOSITORY AND LIVE URL ARE RESTRICTED UNDER CLIENT / INTERNAL NDA.
                 </p>

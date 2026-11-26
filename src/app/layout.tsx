@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Navigation } from "@/components/sections/navigation";
-import { Footer } from "@/components/sections/footer";
-import { BackToTop } from "@/components/back-to-top";
-import { SpaceBackdrop } from "@/components/space-backdrop";
+import { PublicChrome } from "@/components/public-chrome";
 import { getShellData } from "@/lib/data/shell";
+import { getSiteConfig } from "@/lib/data/site-config";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -28,27 +26,29 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Dewanta Rahma Satria | Software Engineer & QA",
-  description:
-    "Software Engineering student focused on software development, quality assurance, test automation, and UI/UX.",
-  openGraph: {
-    title: "Dewanta Rahma Satria | Software Engineer & QA",
-    description:
-      "Software Engineering student focused on software development, quality assurance, test automation, and UI/UX.",
-    type: "website",
-  },
-  other: {
-    "theme-color": "#000000",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+
+  return {
+    title: siteConfig.seoTitle,
+    description: siteConfig.seoDescription,
+    openGraph: {
+      title: siteConfig.seoTitle,
+      description: siteConfig.seoDescription,
+      type: "website",
+    },
+    other: {
+      "theme-color": "#000000",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { profile, socials } = await getShellData();
+  const { siteConfig } = await getShellData();
 
   return (
     <html
@@ -56,13 +56,7 @@ export default async function RootLayout({
       className={`${barlow.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable}`}
     >
       <body>
-        <div className="relative isolate min-h-screen text-[var(--white-100)] flex flex-col">
-          <SpaceBackdrop />
-          <Navigation name={profile?.name} />
-          <div className="flex-1">{children}</div>
-          <Footer name={profile?.name} socials={socials} />
-          <BackToTop />
-        </div>
+        <PublicChrome siteConfig={siteConfig}>{children}</PublicChrome>
       </body>
     </html>
   );

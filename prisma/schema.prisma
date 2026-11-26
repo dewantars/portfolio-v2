@@ -8,75 +8,159 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Profile {
-  id        String   @id @default(cuid())
-  name      String
-  headline  String
-  summary   String
-  photoUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Experience {
-  id          String   @id @default(cuid())
-  role        String
-  company     String
-  period      String
-  description String
-  tags        String[]
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model SiteConfig {
+  id                    String   @id @default("main")
+  fullName              String
+  roleEyebrow           String
+  headline              String
+  bioSummary            String
+  photoUrl              String
+  location              String
+  email                 String
+  availabilityStatus    String
+  documentRef           String
+  cvPdfUrl              String?
+  githubUsername        String
+  githubUrl             String
+  linkedinUrl           String
+  instagramUrl          String?
+  heroHeadline          String
+  heroSubheadline       String
+  heroBackgroundUrl     String?
+  heroFlightDeckLabel   String
+  heroPrimaryCtaLabel   String
+  heroSecondaryCtaLabel String
+  aboutTitle            String
+  aboutBody             String
+  aboutSecondaryBody    String?
+  aboutDisciplines      Json
+  aboutDeckCards        Json
+  contactHeadline       String
+  contactBody           String
+  navBrandLabel         String
+  navCtaLabel           String
+  navCtaHref            String
+  navVisibility         Json
+  footerCopyright       String
+  seoTitle              String
+  seoDescription        String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
 
 model Project {
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  title              String
+  missionCode        String
+  summary            String
+  architectureDetail String?
+  role               String
+  techStack          String[]
+  statusLabel        String
+  layoutType         String   @default("standard")
+  githubUrl          String?
+  liveUrl            String?
+  featuredOnHome     Boolean  @default(true)
+  sortOrder          Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Experience {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  role           String
+  organization   String
+  period         String
+  location       String?
+  description    String
+  tags           String[]
+  featuredOnHome Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Education {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  institution  String
+  degree       String
+  fieldOfStudy String
+  period       String
+  metric       String?
+  description  String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Skill {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  category      String
+  name          String
+  specification String?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Certification {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  issuer          String
+  issueDate       String
+  credentialId    String?
+  verificationUrl String?
+  imageUrl        String?
+  category        String
+  description     String?
+  tags            String[]
+  featuredOnHome  Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Language {
   id          String   @id @default(cuid())
-  number      String
+  slug        String   @unique
   name        String
-  role        String
-  description String
-  stack       String[]
-  type        String
-  theme       String
-  github      String?
-  liveUrl     String?
-  order       Int      @default(0)
+  proficiency String
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model SkillGroup {
-  id        String   @id @default(cuid())
-  title     String
-  skills    String[]
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model GalleryItem {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  code         String
+  title        String
+  caption      String
+  category     String
+  location     String
+  capturedDate String
+  mediaType    String   @default("image")
+  aspectRatio  String   @default("1:1")
+  isFeatured   Boolean  @default(false)
+  imageUrl     String?
+  posterUrl    String?
+  altText      String?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model Achievement {
-  id          String   @id @default(cuid())
-  title       String
-  category    String
-  date        String
-  issuer      String
-  description String
-  image       String
-  tags        String[]
-  credentialUrl String?
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model SocialLink {
-  id        String   @id @default(cuid())
-  platform  String
-  label     String
-  url       String
-  icon      String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model RepoConfig {
+  id              String   @id @default("main")
+  githubUsername  String   @default("dewantars")
+  maxRepos        Int      @default(50)
+  hiddenRepos     String[] @default([])
+  pinnedRepoNames String[] @default([])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

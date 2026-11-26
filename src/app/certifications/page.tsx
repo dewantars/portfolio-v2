@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import { SectionLabel } from "@/components/ui/icons";
-import { getAchievements } from "@/lib/data/achievements";
+import { getCertifications } from "@/lib/data/certifications";
+import { getSiteConfig } from "@/lib/data/site-config";
 import { CertificationsLedger } from "@/components/certifications/certifications-ledger";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Certifications | Dewanta Rahma Satria",
-  description:
-    "Credentials, licenses, academic honors, and verification log for Dewanta Rahma Satria.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig();
+  return {
+    title: `Certifications | ${siteConfig.fullName}`,
+    description: `Credentials, licenses, academic honors, and verification log for ${siteConfig.fullName}.`,
+  };
+}
 
 export default async function CertificationsPage() {
-  const achievements = await getAchievements();
+  const certifications = await getCertifications();
 
   return (
     <main className="max-w-[1320px] mx-auto px-5 md:px-8 pt-28 md:pt-32 pb-20 md:pb-28">
@@ -29,7 +32,7 @@ export default async function CertificationsPage() {
         </p>
       </div>
 
-      <CertificationsLedger achievements={achievements} />
+      <CertificationsLedger certifications={certifications} />
     </main>
   );
 }

@@ -8,37 +8,37 @@ import { Contact } from "@/components/sections/contact";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { HomeInteractiveBackground } from "@/components/home-interactive-background";
 
-import { getProfile } from "@/lib/data/profile";
+import { buildContactChannels, getSiteConfig } from "@/lib/data/site-config";
 import { getExperiences } from "@/lib/data/experience";
 import { getProjects } from "@/lib/data/projects";
 import { getSkillGroups } from "@/lib/data/skills";
-import { getAchievements } from "@/lib/data/achievements";
-import { getSocialLinks } from "@/lib/data/socials";
+import { getCertifications } from "@/lib/data/certifications";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [profile, experiences, projects, skillGroups, achievements, socials] =
+  const [siteConfig, experiences, projects, skillGroups, certifications] =
     await Promise.all([
-      getProfile(),
-      getExperiences(),
-      getProjects(),
+      getSiteConfig(),
+      getExperiences({ featuredOnly: true }),
+      getProjects({ featuredOnly: true }),
       getSkillGroups(),
-      getAchievements(),
-      getSocialLinks(),
+      getCertifications({ featuredOnly: true }),
     ]);
+
+  const channels = buildContactChannels(siteConfig);
 
   return (
     <>
       <HomeInteractiveBackground />
       <main id="top">
-        <Hero profile={profile} />
-        <About profile={profile} />
+        <Hero siteConfig={siteConfig} />
+        <About siteConfig={siteConfig} />
         <Experience experiences={experiences} />
         <Projects projects={projects} />
         <Skills skillGroups={skillGroups} />
-        <Achievements achievements={achievements} />
-        <Contact socials={socials} />
+        <Achievements certifications={certifications} />
+        <Contact siteConfig={siteConfig} channels={channels} />
       </main>
       <ScrollReveal />
     </>
